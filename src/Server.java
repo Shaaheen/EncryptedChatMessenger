@@ -11,7 +11,7 @@ public class Server {
 	private Socket clientSocket = null;
 	private int port;
 	private ArrayList<ClientThread> clients;
-
+	private boolean notStopped;
 	/**
 	* Server constructor
 	*/
@@ -21,29 +21,21 @@ public class Server {
 	}
 
 	public void start(){
+		notStopped = true;
 		//create server socket and wait for connections
 		try{
 			serverSocket = new ServerSocket(port);
-			while (true){
+			while (notStopped){
 				System.out.println("Server waiting for clients on port " + port + "...");
 
 				clientSocket = serverSocket.accept();
+				if(!notStopped)
+					break;
 				ClientThread t = new ClientThread(clientSocket);
 				clients.add(t);
 				t.start();
-				try{
-				serverSocket.close();
-				for (int i = 0; i < clients.size(); i++){
-					ClientThread tc = clients.get(i);
-					try{
-						tc.is.close();
-						tc.os.close();
-						tc.clientSocket.close();
-					} catch(Exception e){}
-				}
-			} catch(IOException e){}
 			}//end of while
-			/**
+			
 			try{
 				serverSocket.close();
 				for (int i = 0; i < clients.size(); i++){
@@ -52,10 +44,16 @@ public class Server {
 						tc.is.close();
 						tc.os.close();
 						tc.clientSocket.close();
-					} catch(Exception e){}
-				}
-			} catch(IOException e){} */
-		}catch(IOException e){}
+					} catch(Exception e){
+
+					}
+				}//end of for loop
+			} catch(IOException e){
+				System.out.println("Exception closing the server and clients: " + e);
+			}
+		} catch (IOException e){
+			System.out.println(" Exception on new ServerSocket: " + e);
+		}
 	}
 
 	public static void main(String args[]) {
