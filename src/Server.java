@@ -6,7 +6,7 @@ import java.util.*;
 import java.net.Socket;
 import java.net.ServerSocket;
 
-public class Server {
+public class Server extends Thread{
   	private ServerSocket serverSocket = null;
 	private Socket clientSocket = null;
 	private int port;
@@ -20,7 +20,7 @@ public class Server {
 		clients = new ArrayList<ClientThread>();
 	}
 
-	public void start(){
+	public void run(){
 		notStopped = true;
 		//create server socket and wait for connections
 		try{
@@ -29,15 +29,17 @@ public class Server {
 				System.out.println("Server waiting for clients on port " + port + "...");
 
 				clientSocket = serverSocket.accept();
+				System.out.println("Connection received from " + clientSocket.getInetAddress().getHostName());
 				if(!notStopped)
 					break;
 				ClientThread t = new ClientThread(clientSocket);
 				clients.add(t);
 				t.start();
 			}//end of while
-			
+
 			try{
 				serverSocket.close();
+				System.out.println("Server ended");
 				for (int i = 0; i < clients.size(); i++){
 					ClientThread tc = clients.get(i);
 					try{
@@ -56,26 +58,12 @@ public class Server {
 		}
 	}
 
-	public static void main(String args[]) {
-		int portNumber = 2222;
-		if (args.length == 1){
-			try{
-				portNumber = Integer.parseInt(args[0]);
-			} catch(Exception e){
-				System.out.println("Invalid port number.");
-				System.out.println("Usage: java Server <portNumber>");
-				return;
-			}	
-		} else if (args.length == 0){
-			;
-		} else{
-			System.out.println("Usage: java Server <portNumber>");
-			return;
-		}
-		Server server = new Server(portNumber);
-		server.start();
-	}//end of main method
-}//end of server class
+
+
+	public void stopServer(){
+		notStopped = false;
+	}
+
 
 /*
  * The chat client thread.
@@ -91,11 +79,25 @@ class ClientThread extends Thread {
 		this.clientSocket = clientSocket;
 		try{
 			os = new ObjectOutputStream(clientSocket.getOutputStream());
+			os.flush();
 			is = new ObjectInputStream(clientSocket.getInputStream());
-			try{			
-				username = (String) is.readObject();
-			} catch(ClassNotFoundException e){}
-			System.out.println("Welcome   " + username);
+			os.writeObject("Connection Successful");
+			os.flush();
+			String message ="";
+			do{
+				try{
+					message = (String)is.readObject();
+					System.out.println("client>" + message);
+					if (message.equals("bye")) {
+						//sendMessage("bye");
+						os.writeObject(message);
+						os.flush();
+					}
+				}
+				catch(ClassNotFoundException classnot){
+					System.err.println("Data received in unknown format");
+				}
+			}while(!message.equals("bye"));
 		} catch (IOException e){
 			System.out.println("Exception creating new Input/output Streams: " + e);
 			return;
