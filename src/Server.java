@@ -6,65 +6,65 @@ import java.util.*;
 import java.net.Socket;
 import java.net.ServerSocket;
 
-public class Server extends Thread{
-  	private ServerSocket serverSocket = null;
+public class Server extends Thread {
+	private ServerSocket serverSocket = null;
 	private Socket clientSocket = null;
 	private int port;
 	private ArrayList<ClientThread> clients;
 	private boolean notStopped;
+
 	/**
-	* Server constructor
-	*/
-	public Server(int port){
+	 * Server constructor
+	 */
+	public Server(int port) {
 		this.port = port;
 		clients = new ArrayList<ClientThread>();
 	}
 
-	public void run(){
+	public void run() {
 		notStopped = true;
 		//create server socket and wait for connections
-		try{
+		try {
 			serverSocket = new ServerSocket(port);
-			while (notStopped){
+			while (notStopped) {
 				System.out.println("Server waiting for clients on port " + port + "...");
 
 				clientSocket = serverSocket.accept();
 				System.out.println("Connection received from " + clientSocket.getInetAddress().getHostName());
-				if(!notStopped)
+				if (!notStopped)
 					break;
 				ClientThread t = new ClientThread(clientSocket);
 				clients.add(t);
 				t.start();
 			}//end of while
 
-			try{
+			try {
 				serverSocket.close();
 				System.out.println("Server ended");
-				for (int i = 0; i < clients.size(); i++){
+				for (int i = 0; i < clients.size(); i++) {
 					ClientThread tc = clients.get(i);
-					try{
+					try {
 						tc.is.close();
 						tc.os.close();
 						tc.clientSocket.close();
-					} catch(Exception e){
+					} catch (Exception e) {
 
 					}
 				}//end of for loop
-			} catch(IOException e){
+			} catch (IOException e) {
 				System.out.println("Exception closing the server and clients: " + e);
 			}
-		} catch (IOException e){
+		} catch (IOException e) {
 			System.out.println(" Exception on new ServerSocket: " + e);
 		}
 	}
 
 
-
-	public void stopServer(){
+	public void stopServer() {
 		notStopped = false;
 	}
 
-
+}
 /*
  * The chat client thread.
  * 

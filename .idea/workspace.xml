@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3f45f83f-be5d-4f46-ba26-36962e7b0a1d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/TestApplication.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/UnitTestApplication.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/Client.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/Client.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/ClientThread.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/ClientThread.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/Server.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/Server.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Client.java" afterPath="$PROJECT_DIR$/src/Client.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/EncryptedChatMessenger.iml" afterPath="$PROJECT_DIR$/EncryptedChatMessenger.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Server.java" afterPath="$PROJECT_DIR$/src/Server.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="EncryptedChatMessenger.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -50,25 +42,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UnitTestApplication.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="UnitTestApplication.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/UnitTestApplication.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.71257484" vertical-offset="0" max-vertical-offset="510">
+            <state vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="510">
               <caret line="18" column="44" selection-start-line="18" selection-start-column="44" selection-end-line="18" selection-end-column="44" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Server.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Server.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Server.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1281" max-vertical-offset="1870">
+            <state vertical-scroll-proportion="0.30538923" vertical-offset="969" max-vertical-offset="1870">
               <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1524#1525#0" expanded="true" />
-                <element signature="e#1549#1550#0" expanded="true" />
+                <element signature="e#1539#1540#0" expanded="true" />
+                <element signature="e#1564#1565#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -508,12 +500,12 @@
       <option name="number" value="Default" />
       <updated>1495725062281</updated>
       <workItem from="1495725067796" duration="783000" />
-      <workItem from="1496408699333" duration="13309000" />
+      <workItem from="1496408699333" duration="13968000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14092000" />
+    <option name="totallyTimeSpent" value="14751000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
@@ -593,8 +585,8 @@
           <caret line="4" column="4" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="4" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1524#1525#0" expanded="true" />
-            <element signature="e#1549#1550#0" expanded="true" />
+            <element signature="e#1539#1540#0" expanded="true" />
+            <element signature="e#1564#1565#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -604,18 +596,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="204">
           <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Server.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1281" max-vertical-offset="1870">
-          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1524#1525#0" expanded="true" />
-            <element signature="e#1549#1550#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -633,9 +613,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/UnitTestApplication.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.71257484" vertical-offset="0" max-vertical-offset="510">
+        <state vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="510">
           <caret line="18" column="44" selection-start-line="18" selection-start-column="44" selection-end-line="18" selection-end-column="44" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Server.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.30538923" vertical-offset="969" max-vertical-offset="1870">
+          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1539#1540#0" expanded="true" />
+            <element signature="e#1564#1565#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
