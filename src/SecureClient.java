@@ -10,36 +10,15 @@ import java.util.TimerTask;
 /**
  * Created by Shaaheen on 25-May-17.
  */
-public class Client {
+public class SecureClient {
     private String name;
     private Server serverForPeering;
 
-    Client(String clientName, int port){
+    SecureClient(String clientName, int port){
         this.serverForPeering = new Server(port);
         this.name = clientName;
         serverForPeering.start();
         //serverForPeering.run();
-        Timer timer = new Timer();
-
-//        timer.schedule(new TimerTask() {
-//
-//            @Override
-//            public void run() {
-//                try {
-//                    System.out.println("Sleep");
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, 0, 700);
-
-//        try {
-//            Thread.sleep(15000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        //System.out.println("Thread sleeping done");
     }
 
     protected void stopServer(){
@@ -49,9 +28,6 @@ public class Client {
     protected void connectTo( String hostName, int portNumberToConnect) throws IOException {
 
         Socket communicationSocket = new Socket(hostName, portNumberToConnect);
-//        PrintWriter out = new PrintWriter(communicationSocket.getOutputStream(), true);
-//        BufferedReader in = new BufferedReader(
-//                new InputStreamReader(communicationSocket.getInputStream()));
 
         ObjectOutputStream out = new ObjectOutputStream(communicationSocket.getOutputStream());
         out.flush();
@@ -61,15 +37,11 @@ public class Client {
         do{
             try{
                 message = (String)in.readObject();
-                System.out.println("server>" + message);
-//                sendMessage("Hi my server");
+                System.out.println("Paired client> " + message);
                 message = "Messagy back";
-                out.writeObject(message);
-                out.flush();
+                sendMessage(out, message);
                 message = "bye";
-//                sendMessage(message);
-                out.writeObject(message);
-                out.flush();
+                sendMessage(out, message);
             }
             catch(ClassNotFoundException classNot){
                 System.err.println("data received in unknown format");
@@ -79,8 +51,10 @@ public class Client {
 
     }
 
-
-
+    private void sendMessage(ObjectOutputStream out, String message) throws IOException {
+        out.writeObject(message);
+        out.flush();
+    }
 
 
 }

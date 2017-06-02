@@ -81,17 +81,14 @@ class ClientThread extends Thread {
 			os = new ObjectOutputStream(clientSocket.getOutputStream());
 			os.flush();
 			is = new ObjectInputStream(clientSocket.getInputStream());
-			os.writeObject("Connection Successful");
-			os.flush();
+			sendMessage("Connection Successful");
 			String message ="";
 			do{
 				try{
 					message = (String)is.readObject();
-					System.out.println("client>" + message);
+					System.out.println("Me> " + message);
 					if (message.equals("bye")) {
-						//sendMessage("bye");
-						os.writeObject(message);
-						os.flush();
+						sendMessage("bye");
 					}
 				}
 				catch(ClassNotFoundException classnot){
@@ -102,5 +99,10 @@ class ClientThread extends Thread {
 			System.out.println("Exception creating new Input/output Streams: " + e);
 			return;
 		}
+	}
+
+	private void sendMessage(String mesage) throws IOException {
+		os.writeObject(mesage);
+		os.flush();
 	}
 }
