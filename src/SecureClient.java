@@ -16,4 +16,9 @@ public class SecureClient extends PeerClient{
         super(clientName, port);
     }
 
+    protected void requestSharedKeyWith(String peerClientName) throws IOException {
+        System.out.println("Requesting shared key from server...");
+        sendMessage("sharedkey_request:" + getClientName() + ":" + peerClientName);
+    }
+
 }

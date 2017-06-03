@@ -3,13 +3,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Shaaheen on 03-Jun-17.
  * THIS IS TO ABSTRACT AWAY SERVER/CLIENT SOCKET PROGRAMMING
  */
-public class PeerClient {
+public class PeerClient extends Thread{
     private String name;
     private Server serverForPeering;
     private int port;
@@ -17,8 +21,13 @@ public class PeerClient {
     private String connectedWithName;
     private int connectedWithPort;
 
+    private ObjectOutputStream out;
+
+    private String hostName;
+    private int portNumToConnectTo;
+
     PeerClient(String clientName, int port){
-        this.serverForPeering = new Server(port, clientName);
+        this.serverForPeering = new Server(port, clientName,this);
         this.port = port;
         connectionEstablished = false;
         this.name = clientName;
@@ -36,11 +45,16 @@ public class PeerClient {
         this.serverForPeering.stopServer();
     }
 
-    protected void connectTo( String hostName, int portNumberToConnect) throws IOException {
+    protected void prepareConnectionTo(String hostName, int portNumToConnectTo){
+        this.hostName = hostName;
+        this.portNumToConnectTo = portNumToConnectTo;
+    }
 
-        Socket communicationSocket = new Socket(hostName, portNumberToConnect);
+    protected void connectToPeer() throws IOException {
 
-        ObjectOutputStream out = new ObjectOutputStream(communicationSocket.getOutputStream());
+        Socket communicationSocket = new Socket(hostName, portNumToConnectTo);
+
+        out = new ObjectOutputStream(communicationSocket.getOutputStream());
         out.flush();
         ObjectInputStream in = new ObjectInputStream(communicationSocket.getInputStream());
         String message = "";
@@ -51,20 +65,32 @@ public class PeerClient {
                 connectionEstablished = true;
                 System.out.println("Paired client> Name is: " + message);
                 connectedWithName = message;
-                connectedWithPort = portNumberToConnect;
+                connectedWithPort = portNumToConnectTo;
                 message = "I am " + name;
-                sendMessage(out, message);
-                message = "bye";
-                sendMessage(out, message);
+                sendMessage(message);
+                //message = "end_connection";
+                //sendMessage(out, message);
             }
             catch(ClassNotFoundException classNot){
                 System.err.println("data received in unknown format");
             }
-        }while(!message.equals("bye"));
+        }while(!message.equals("end_connection"));
 
     }
 
-    private void sendMessage(ObjectOutputStream out, String message) throws IOException {
+    public void run(){
+        try {
+            connectToPeer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void closeConnection() throws IOException {
+        sendMessage("end_connection");
+    }
+
+    protected void sendMessage(String message) throws IOException {
         out.writeObject(message);
         out.flush();
     }
@@ -77,12 +103,16 @@ public class PeerClient {
         return connectedWithPort;
     }
 
-    public String getName(){
+    public String getClientName(){
         return name;
     }
 
     public int getPort() {
         return port;
+    }
+
+    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException {
+        return new ClientThread(clientSocket,serverName,true );
     }
 }
 
@@ -94,13 +124,18 @@ class Server extends Thread {
     private boolean notStopped;
     private String serverName;
 
+    private PeerClient peerClient;
+
+    private String[] keywordsInMessages;
+
     /**
      * Server constructor
      */
-    public Server(int port, String name) {
+    public Server(int port, String name, PeerClient peerClient) {
         this.port = port;
         clients = new ArrayList<ClientThread>();
         this.serverName = name;
+        this.peerClient = peerClient;
     }
 
     public void run() {
@@ -115,7 +150,14 @@ class Server extends Thread {
                 System.out.println("Connection received from " + clientSocket.getInetAddress().getHostName());
                 if (!notStopped)
                     break;
-                ClientThread t = new ClientThread(clientSocket,serverName);
+                ClientThread t = null;
+                try {
+                    t = peerClient.getNewClientThread(clientSocket,serverName);
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
                 clients.add(t);
                 t.start();
             }//end of while
@@ -158,8 +200,19 @@ class ClientThread extends Thread {
     ObjectOutputStream os = null;
     Socket clientSocket = null;
 
+    protected List keywordsInMessages;
+
+    ClientThread(Socket clientSocket, String serverName, boolean run) throws NoSuchProviderException, NoSuchAlgorithmException {
+        this.clientSocket = clientSocket;
+        setKeywordsInMessages();
+        if (run) communicateWithClient(clientSocket, serverName);
+    }
+
     ClientThread(Socket clientSocket, String serverName){
         this.clientSocket = clientSocket;
+    }
+
+    protected void communicateWithClient(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException {
         try{
             os = new ObjectOutputStream(clientSocket.getOutputStream());
             os.flush();
@@ -170,22 +223,31 @@ class ClientThread extends Thread {
                 try{
                     message = (String)is.readObject();
                     System.out.println("Me> " + message);
-                    if (message.equals("bye")) {
-                        sendMessage("bye");
-                    }
+                    reactToKeyword(message); //If keyword, will react
                 }
                 catch(ClassNotFoundException classnot){
                     System.err.println("Data received in unknown format");
                 }
-            }while(!message.equals("bye"));
+            }while(!message.equals("end_connection"));
         } catch (IOException e){
             System.out.println("Exception creating new Input/output Streams: " + e);
             return;
         }
     }
 
-    private void sendMessage(String mesage) throws IOException {
+    //Default keywords
+    protected void setKeywordsInMessages(){
+        this.keywordsInMessages = Arrays.asList("end_connection");
+    }
+
+    protected void sendMessage(String mesage) throws IOException {
         os.writeObject(mesage);
         os.flush();
+    }
+
+    protected void reactToKeyword(String keyword) throws IOException, NoSuchProviderException, NoSuchAlgorithmException {
+        if (keyword.equals("end_connection")){
+            sendMessage("end_connection");
+        }
     }
 }

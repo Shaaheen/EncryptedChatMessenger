@@ -13,16 +13,20 @@ public class UnitTestApplication {
         System.out.println("Setting up clients and server" + "\r\n");
         clientA = new SecureClient( "Client_A", 4422 );
         clientB = new SecureClient("Client_B", 5422);
-        trustedCryptoServer = new TrustedCryptoServer("Trusted3rdParty",5120);
+        trustedCryptoServer = new TrustedCryptoServer("Trusted3rdParty", 5220);
     }
 
     //Used for client messaging
     @Test
     public void testClientToClientConnection() throws Exception{
-        clientA.connectTo("localhost",clientB.getPort());
+        clientA.prepareConnectionTo( "localhost" , clientB.getPort() );
+        clientA.start();
+        Thread.sleep(1000);
+        //clientA.connectTo("localhost",clientB.getPort());
         Assert.assertEquals(clientA.connectionEstablished, true);
-        Assert.assertEquals(clientA.getConnectedWithName(), clientB.getName());
+        Assert.assertEquals(clientA.getConnectedWithName(), clientB.getClientName());
         Assert.assertEquals(clientA.getConnectedWithPort(), clientB.getPort());
+        clientA.closeConnection();
 
         tearDown();
     }
@@ -30,22 +34,32 @@ public class UnitTestApplication {
     //Used when client requests shared key from server
     @Test
     public void testClientToTrustedServerConnection() throws Exception{
-        clientA.connectTo("localhost",trustedCryptoServer.getPort());
-        Assert.assertEquals(clientA.connectionEstablished, true);
-        Assert.assertEquals(clientA.getConnectedWithName(), trustedCryptoServer.getName());
-        Assert.assertEquals(clientA.getConnectedWithPort(), trustedCryptoServer.getPort());
+        clientA.prepareConnectionTo( "localhost" , trustedCryptoServer.getPort() );
+        clientA.start();
+        Thread.sleep(1000);
 
+        //clientA.connectTo("localhost",trustedCryptoServer.getPort());
+
+        Assert.assertEquals(clientA.connectionEstablished, true);
+        Assert.assertEquals(clientA.getConnectedWithName(), trustedCryptoServer.getClientName());
+        Assert.assertEquals(clientA.getConnectedWithPort(), trustedCryptoServer.getPort());
+        clientA.closeConnection();
         tearDown();
     }
 
     //Used when server needs to share key with other client
     @Test
     public void testTrustedServerToClientConnection() throws Exception{
-        trustedCryptoServer.connectTo("localhost",clientB.getPort());
-        Assert.assertEquals(trustedCryptoServer.connectionEstablished, true);
-        Assert.assertEquals(trustedCryptoServer.getConnectedWithName(), clientB.getName());
-        Assert.assertEquals(trustedCryptoServer.getConnectedWithPort(), clientB.getPort());
+        trustedCryptoServer.prepareConnectionTo( "localhost" , clientB.getPort() );
+        trustedCryptoServer.start();
+        Thread.sleep(1000);
 
+        //trustedCryptoServer.connectTo("localhost",clientB.getPort());
+
+        Assert.assertEquals(trustedCryptoServer.connectionEstablished, true);
+        Assert.assertEquals(trustedCryptoServer.getConnectedWithName(), clientB.getClientName());
+        Assert.assertEquals(trustedCryptoServer.getConnectedWithPort(), clientB.getPort());
+        trustedCryptoServer.closeConnection();
         tearDown();
     }
 
@@ -54,16 +68,42 @@ public class UnitTestApplication {
 
         //testing certified client search function
         trustedCryptoServer.certifyNewClient("ClientG",856);
-        Assert.assertEquals(trustedCryptoServer.findPortNumOfClient("ClientG"),856);
+        Assert.assertEquals(trustedCryptoServer.getPortNumIfCertified("ClientG"),856);
 
-        Assert.assertEquals(trustedCryptoServer.findPortNumOfClient("ClientA"),-1);
+        Assert.assertEquals(trustedCryptoServer.getPortNumIfCertified("ClientA"),-1);
 
+        trustedCryptoServer.certifyNewClient("ClientK",555);
+        Assert.assertEquals( trustedCryptoServer.verifyThatClientsAreTrusted( "ClientK", "ClientG" ), true );
+
+        Assert.assertEquals( trustedCryptoServer.verifyThatClientsAreTrusted( "ClientA", "ClientG" ), false );
+
+        tearDown();
+    }
+
+    //Used when client requests shared key from server
+    @Test
+    public void testSharedKeyRequestAndGenerationConnection() throws Exception{
+        trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort() );
+        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort() );
+        clientA.prepareConnectionTo( "localhost" , trustedCryptoServer.getPort() );
+        clientA.start();
+        Thread.sleep(1000);
+
+        Assert.assertEquals(clientA.connectionEstablished, true);
+        Assert.assertEquals(clientA.getConnectedWithName(), trustedCryptoServer.getClientName());
+        Assert.assertEquals(clientA.getConnectedWithPort(), trustedCryptoServer.getPort());
+
+        //KEY REQUEST
+        clientA.requestSharedKeyWith( clientB.getClientName() );
+
+        clientA.closeConnection();
         tearDown();
     }
 
     @After
     public void tearDown() throws Exception {
         System.out.println("Closing sockets");
+        Thread.sleep(1000);
         clientA.stopServer();
         clientB.stopServer();
         trustedCryptoServer.stopServer();

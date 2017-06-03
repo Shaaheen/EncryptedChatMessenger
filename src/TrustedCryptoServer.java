@@ -1,26 +1,64 @@
+import org.bouncycastle.crypto.paddings.PKCS7Padding;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.io.IOException;
+import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Shaaheen on 02-Jun-17.
+ *
+ * Trusted 3rd Party server used to generate and distribute secret shared keys
+ *  - Keeps track of certified clients (known trusted clients) and thus acts as
+ *  a secure gateway for messaging
  */
 public class TrustedCryptoServer extends PeerClient{
     private ArrayList<CertifiedClient> certifiedClients;
+    protected String keyPhraseForSharedKey;
 
-    TrustedCryptoServer(String trustedServerName, int port) {
+    TrustedCryptoServer(String trustedServerName, int port)  {
         super(trustedServerName, port);
         this.certifiedClients = new ArrayList<CertifiedClient>();
+
+        //Default format -> "sharedkey_request":OwnClientName:ClientNameRequestingCommWith
+        //Will search for the keyphrase "sharedkey_request" by default
+        this.keyPhraseForSharedKey = "sharedkey_request";
     }
 
-    protected void clearCertifiedClients(){
-        certifiedClients.clear();
+    TrustedCryptoServer(String trustedServerName, int port, String keyPhraseForSharedKey) {
+        super(trustedServerName, port);
+        this.certifiedClients = new ArrayList<CertifiedClient>();
+        this.keyPhraseForSharedKey = keyPhraseForSharedKey;
     }
 
+    //Method to generate a secure random 256 key bit for AES encryption
+    protected byte[] generateNewSharedKey() throws NoSuchAlgorithmException, NoSuchProviderException {
+
+        Security.addProvider(new BouncyCastleProvider());
+        //KeyGenerator.getInstance("AES/CBC/PKCS5Padding", "BC");
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        SecureRandom rand = new SecureRandom();
+        keyGen.init(rand);
+        keyGen.init(256);
+        SecretKey secretKey = keyGen.generateKey();
+
+        return secretKey.getEncoded();
+    }
+
+    //New trusted client certified by the trusted 3rd party
     protected void certifyNewClient(String name, int portNumber){
         certifiedClients.add(new CertifiedClient(name, portNumber));
     }
 
-    protected int findPortNumOfClient(String clientName){
+    //Checks if given client is certified, returns port number if client is certified, -1 if not
+    protected int getPortNumIfCertified(String clientName){
         for (CertifiedClient certifiedClient: certifiedClients){
             if ( certifiedClient.getName().equals( clientName ) ){
                 return certifiedClient.getPortNum();
@@ -29,11 +67,21 @@ public class TrustedCryptoServer extends PeerClient{
         return -1;
     }
 
-    private void generateNewSharedKey(){
-        SecureRandom random = new SecureRandom();
-        byte[] keyBytes = new byte[128];
-        random.nextBytes(keyBytes);
+    //If no port number exists, then client is not trusted
+    protected boolean verifyThatClientsAreTrusted(String clientA, String clientB){
+        return  ( ( getPortNumIfCertified(clientA) > -1 ) && ( getPortNumIfCertified(clientB)> -1 ) ) ;
     }
+
+    protected void clearCertifiedClients(){
+        certifiedClients.clear();
+    }
+
+    //Returns a trusted server thread - Communication thread for client
+    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException {
+        System.out.println("OVERIDED METHOD " + keyPhraseForSharedKey);
+        return new CertifiedClientThread( clientSocket, serverName, this );
+    }
+
 }
 
 class CertifiedClient {
@@ -45,12 +93,51 @@ class CertifiedClient {
         this.portNum = portNum;
     }
 
-
     public String getName() {
         return name;
     }
 
     public int getPortNum() {
         return portNum;
+    }
+}
+
+class CertifiedClientThread extends ClientThread{
+    private TrustedCryptoServer trustedCryptoServer;
+
+    CertifiedClientThread(Socket clientSocket, String serverName, TrustedCryptoServer trustedCryptoServer) throws NoSuchProviderException, NoSuchAlgorithmException {
+        super(clientSocket, serverName);
+        this.trustedCryptoServer = trustedCryptoServer;
+        setKeywordsInMessages(); //Set new shared key request keyword
+        communicateWithClient(clientSocket,serverName);
+    }
+
+    //Add shared key to key word reaction list
+    protected void setKeywordsInMessages(){
+        this.keywordsInMessages = Arrays.asList( "end_connection" , trustedCryptoServer.keyPhraseForSharedKey );
+    }
+
+    //Method to react to specific keywords
+    // Will react to a shared key request by a client towards another client
+    protected void reactToKeyword(String keyword) throws IOException, NoSuchProviderException, NoSuchAlgorithmException {
+        System.out.println("DIFF KEYWORDs: " + this.keywordsInMessages + " and keyword : " + keyword);
+        if (keyword.equals("end_connection")){
+            sendMessage("end_connection");
+        }
+        // If message contains the shared key request keywords
+        else if ( keyword.contains( trustedCryptoServer.keyPhraseForSharedKey ) ) {
+            String clientA  = keyword.split(":")[1];
+            String clientB  = keyword.split(":")[2];
+
+            //If both clients are trusted by the server, then gen and pass on shared key
+            if ( trustedCryptoServer.verifyThatClientsAreTrusted( clientA , clientB ) ){
+                byte[] keyBytes = trustedCryptoServer.generateNewSharedKey();
+                System.out.println("Generate New key : " + Arrays.toString( keyBytes ) );
+            }
+            else{
+                System.out.println("One or more clients are not trusted by Server");
+            }
+
+        }
     }
 }
