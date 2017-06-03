@@ -10,49 +10,53 @@ public class UnitTestApplication {
 
     @Before
     public void setUp() throws Exception {
+        System.out.println("Setting up clients and server" + "\r\n");
         clientA = new SecureClient( "Client_A", 4422 );
         clientB = new SecureClient("Client_B", 5422);
         trustedCryptoServer = new TrustedCryptoServer("Trusted3rdParty",5120);
     }
 
+    //Used for client messaging
     @Test
     public void testClientToClientConnection() throws Exception{
-        System.out.println("Connect test start");
-
         clientA.connectTo("localhost",clientB.getPort());
         Assert.assertEquals(clientA.connectionEstablished, true);
         Assert.assertEquals(clientA.getConnectedWithName(), clientB.getName());
         Assert.assertEquals(clientA.getConnectedWithPort(), clientB.getPort());
 
-        System.out.println("Connect end test");
-
         tearDown();
     }
 
+    //Used when client requests shared key from server
     @Test
     public void testClientToTrustedServerConnection() throws Exception{
-        System.out.println("Connect test start");
-
         clientA.connectTo("localhost",trustedCryptoServer.getPort());
         Assert.assertEquals(clientA.connectionEstablished, true);
         Assert.assertEquals(clientA.getConnectedWithName(), trustedCryptoServer.getName());
         Assert.assertEquals(clientA.getConnectedWithPort(), trustedCryptoServer.getPort());
 
-        System.out.println("Connect end test");
+        tearDown();
+    }
+
+    //Used when server needs to share key with other client
+    @Test
+    public void testTrustedServerToClientConnection() throws Exception{
+        trustedCryptoServer.connectTo("localhost",clientB.getPort());
+        Assert.assertEquals(trustedCryptoServer.connectionEstablished, true);
+        Assert.assertEquals(trustedCryptoServer.getConnectedWithName(), clientB.getName());
+        Assert.assertEquals(trustedCryptoServer.getConnectedWithPort(), clientB.getPort());
 
         tearDown();
     }
 
     @Test
-    public void testTrusterCryptoServer() throws Exception{
-        System.out.println("Trusted Crypto test start");
+    public void testTrustedCryptoServer() throws Exception{
 
+        //testing certified client search function
         trustedCryptoServer.certifyNewClient("ClientG",856);
         Assert.assertEquals(trustedCryptoServer.findPortNumOfClient("ClientG"),856);
 
         Assert.assertEquals(trustedCryptoServer.findPortNumOfClient("ClientA"),-1);
-
-        System.out.println("Trusted Crypto test complete");
 
         tearDown();
     }
