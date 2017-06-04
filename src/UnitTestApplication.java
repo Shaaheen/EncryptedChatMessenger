@@ -114,6 +114,32 @@ public class UnitTestApplication {
         tearDown();
     }
 
+    //Used when client requests shared key from server
+    @Test
+    public void testEncryptionAndDecryptionConnection() throws Exception{
+        trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort(), clientA.getHostName() );
+        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );
+        clientA.prepareConnectionTo( "localhost" , trustedCryptoServer.getPort() );
+        clientA.start();
+        Thread.sleep(1000);
+
+        //KEY REQUEST
+        clientA.requestSharedKeyWith( clientB.getClientName() );
+
+        clientA.closeConnection();
+
+        //clientA.closeConnection();
+        Thread.sleep(5000);
+
+        String test = "Test message one";
+
+        Assert.assertEquals( test.substring(0,test.length() - 2) ,  (new String ( clientA.decryptWithAesKey( clientA.encryptWithAesKey( test.getBytes("UTF-8") ) ), "UTF-8" )).substring(0, test.length() - 2) );
+        //clientA.closeConnection();
+        Thread.sleep(3000);
+
+        tearDown();
+    }
+
     @After
     public void tearDown() throws Exception {
         System.out.println("Closing sockets");

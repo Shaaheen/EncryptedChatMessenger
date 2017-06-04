@@ -1,4 +1,9 @@
 import com.sun.corba.se.spi.activation.*;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.paddings.PKCS7Padding;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
@@ -20,6 +25,34 @@ public class SecureClient extends PeerClient{
         super(clientName, port);
         sharedKey = new byte[1]; //placeholder for sharedkey
     }
+
+    protected void requestEncryptedConnectionWith( String peerClientName ) throws IOException {
+        requestSharedKeyWith( peerClientName );
+
+    }
+
+    protected byte[] encryptWithAesKey(byte[] input) throws InvalidCipherTextException {
+        return processEncryptedInput( true , input );
+    }
+
+    protected byte[] decryptWithAesKey(byte[] input) throws InvalidCipherTextException {
+        return processEncryptedInput( false , input );
+    }
+
+    private byte[] processEncryptedInput(boolean encrypt, byte[] input) throws InvalidCipherTextException {
+        PaddedBufferedBlockCipher pbbc = new PaddedBufferedBlockCipher(new AESEngine(), new PKCS7Padding());
+        pbbc.init(encrypt, new KeyParameter(sharedKey));
+
+        byte[] output = new byte[pbbc.getOutputSize(input.length)];
+        int bytesWrittenOut = pbbc.processBytes(
+                input, 0, input.length, output, 0);
+
+        pbbc.doFinal(output, bytesWrittenOut);
+
+        return output;
+    }
+
+
 
     protected void requestSharedKeyWith(String peerClientName) throws IOException {
         System.out.println("Requesting shared key from server...");
