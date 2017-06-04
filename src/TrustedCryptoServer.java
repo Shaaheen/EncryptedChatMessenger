@@ -1,12 +1,11 @@
-import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -24,6 +23,8 @@ import java.util.Arrays;
 public class TrustedCryptoServer extends PeerClient{
     private ArrayList<CertifiedClient> certifiedClients;
     protected String keyPhraseForSharedKey;
+
+    public static String INCOMING_KEY_KEYWORD = "sharedkey_incoming";
 
     TrustedCryptoServer(String trustedServerName, int port)  {
         super(trustedServerName, port);
@@ -55,23 +56,28 @@ public class TrustedCryptoServer extends PeerClient{
     }
 
     //New trusted client certified by the trusted 3rd party
-    protected void certifyNewClient(String name, int portNumber){
-        certifiedClients.add(new CertifiedClient(name, portNumber));
+    protected void certifyNewClient(String name, int portNumber, String hostName){
+        certifiedClients.add( new CertifiedClient(name, portNumber, hostName) );
     }
 
     //Checks if given client is certified, returns port number if client is certified, -1 if not
-    protected int getPortNumIfCertified(String clientName){
+    protected CertifiedClient getCertifiedClient(String clientName){
         for (CertifiedClient certifiedClient: certifiedClients){
             if ( certifiedClient.getName().equals( clientName ) ){
-                return certifiedClient.getPortNum();
+                return certifiedClient;
             }
         }
-        return -1;
+        return null;
     }
 
     //If no port number exists, then client is not trusted
     protected boolean verifyThatClientsAreTrusted(String clientA, String clientB){
-        return  ( ( getPortNumIfCertified(clientA) > -1 ) && ( getPortNumIfCertified(clientB)> -1 ) ) ;
+        return  ( ( getCertifiedClient(clientA) != null ) && ( getCertifiedClient(clientB) != null) ) ;
+    }
+
+    protected void sendByteArray(int length, byte[] byteArray) throws IOException {
+        out.writeInt(length);
+        out.write( byteArray );
     }
 
     protected void clearCertifiedClients(){
@@ -84,24 +90,23 @@ public class TrustedCryptoServer extends PeerClient{
         return new CertifiedClientThread( clientSocket, serverName, this );
     }
 
-}
+    protected void sendSharedKeyToClient(CertifiedClient certifiedClient, byte[] sharedKey) throws IOException {
+        prepareConnectionTo( certifiedClient.getHostname(), certifiedClient.getPortNum() );
+        start();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sendMessage(INCOMING_KEY_KEYWORD);
+        out.writeInt( sharedKey.length );
+        out.write( sharedKey );
+        out.flush();
+        out.writeObject("end_connection");
+        out.flush();
 
-class CertifiedClient {
-    private String name;
-    private int portNum;
-
-    CertifiedClient(String name, int portNum) {
-        this.name = name;
-        this.portNum = portNum;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getPortNum() {
-        return portNum;
-    }
 }
 
 class CertifiedClientThread extends ClientThread{
@@ -128,25 +133,50 @@ class CertifiedClientThread extends ClientThread{
         }
         // If message contains the shared key request keywords
         else if ( keyword.contains( trustedCryptoServer.keyPhraseForSharedKey ) ) {
-            String clientA  = keyword.split(":")[1];
-            String clientB  = keyword.split(":")[2];
+            String senderClient  = keyword.split(":")[1];
+            String requestedClient  = keyword.split(":")[2];
 
             //If both clients are trusted by the server, then gen and pass on shared key
-            if ( trustedCryptoServer.verifyThatClientsAreTrusted( clientA , clientB ) ){
+            if ( trustedCryptoServer.verifyThatClientsAreTrusted( senderClient , requestedClient ) ){
                 byte[] keyBytes = trustedCryptoServer.generateNewSharedKey();
                 System.out.println("Generate New key : "  + Arrays.toString( keyBytes ) /*+ new String( keyBytes, Charset.forName("UTF-8"))*/ );
                 //System.out.println(Arrays.toString(new String( keyBytes,"UTF8").getBytes()));
-                sendMessage( "sharedkey_incoming" );
+                sendMessage(TrustedCryptoServer.INCOMING_KEY_KEYWORD);
                 os.writeInt(keyBytes.length);
                 os.write( keyBytes );
-
-                //sendMessage( "sharedkey=" + Arrays.toString( keyBytes )); /*+ Arrays.toString( keyBytes )*/
-                //System.out.println("Generate New key : " + new String( keyBytes, Charset.forName("UTF-8")) );
+                os.flush();
+//
+                CertifiedClient requestedClientInfo = trustedCryptoServer.getCertifiedClient( requestedClient );
+                trustedCryptoServer.sendSharedKeyToClient( requestedClientInfo , keyBytes );
             }
             else{
                 System.out.println("One or more clients are not trusted by Server");
             }
 
         }
+    }
+}
+
+class CertifiedClient {
+    private String name;
+    private int portNum;
+    private String hostname;
+
+    CertifiedClient(String name, int portNum, String hostname) {
+        this.name = name;
+        this.portNum = portNum;
+        this.hostname = hostname;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPortNum() {
+        return portNum;
+    }
+
+    public String getHostname() {
+        return hostname;
     }
 }

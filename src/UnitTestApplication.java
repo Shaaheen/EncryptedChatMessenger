@@ -67,12 +67,12 @@ public class UnitTestApplication {
     public void testTrustedCryptoServer() throws Exception{
 
         //testing certified client search function
-        trustedCryptoServer.certifyNewClient("ClientG",856);
-        Assert.assertEquals(trustedCryptoServer.getPortNumIfCertified("ClientG"),856);
+        trustedCryptoServer.certifyNewClient("ClientG", 856, "localhost");
+        Assert.assertNotNull( trustedCryptoServer.getCertifiedClient("ClientG") );
 
-        Assert.assertEquals(trustedCryptoServer.getPortNumIfCertified("ClientA"),-1);
+        Assert.assertNull(trustedCryptoServer.getCertifiedClient("ClientA"));
 
-        trustedCryptoServer.certifyNewClient("ClientK",555);
+        trustedCryptoServer.certifyNewClient( "ClientK", 555 , "localhost" );
         Assert.assertEquals( trustedCryptoServer.verifyThatClientsAreTrusted( "ClientK", "ClientG" ), true );
 
         Assert.assertEquals( trustedCryptoServer.verifyThatClientsAreTrusted( "ClientA", "ClientG" ), false );
@@ -83,8 +83,8 @@ public class UnitTestApplication {
     //Used when client requests shared key from server
     @Test
     public void testSharedKeyRequestAndGenerationConnection() throws Exception{
-        trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort() );
-        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort() );
+        trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort(), clientA.getHostName() );
+        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );
         clientA.prepareConnectionTo( "localhost" , trustedCryptoServer.getPort() );
         clientA.start();
         Thread.sleep(1000);
@@ -97,6 +97,20 @@ public class UnitTestApplication {
         clientA.requestSharedKeyWith( clientB.getClientName() );
 
         clientA.closeConnection();
+        Assert.assertEquals( trustedCryptoServer.generateNewSharedKey().length, 32);
+
+        //clientA.closeConnection();
+        Thread.sleep(5000);
+        Assert.assertEquals( clientA.getSharedKeyLength() , 32 );
+
+        // 32 bytes = 256 bits, checking that sharedkeys are the correct size
+        Assert.assertEquals( trustedCryptoServer.connectionEstablished , true );
+        Assert.assertEquals( trustedCryptoServer.connectedWithName , clientB.getClientName() );
+
+        //clientA.closeConnection();
+        Thread.sleep(3000);
+        Assert.assertEquals( clientB.getSharedKeyLength() , 32 );
+
         tearDown();
     }
 

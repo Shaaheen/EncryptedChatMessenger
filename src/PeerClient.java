@@ -21,10 +21,10 @@ public class PeerClient extends Thread{
     protected String connectedWithName;
     protected int connectedWithPort;
 
-    private ObjectOutputStream out;
+    protected ObjectOutputStream out;
     protected ObjectInputStream in;
 
-    private String hostName;
+    protected String hostName;
     protected int portNumToConnectTo;
 
     PeerClient(String clientName, int port){
@@ -81,7 +81,7 @@ public class PeerClient extends Thread{
                 connectedWithName = message.split(":")[1];
                 connectedWithPort = portNumToConnectTo;
                 System.out.println(connectedWithName+"> My Name is: " + connectedWithName);
-                message = "I am " + name;
+                message = "name:" + name;
                 sendMessage(message);
             }
         }
@@ -121,6 +121,10 @@ public class PeerClient extends Thread{
 
     public int getPort() {
         return port;
+    }
+
+    public String getHostName(){
+        return hostName;
     }
 
     protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException {
@@ -207,7 +211,7 @@ class Server extends Thread {
  *
  */
 class ClientThread extends Thread {
-    String username = null;
+    String username;
     ObjectInputStream  is = null;
     ObjectOutputStream os = null;
     Socket clientSocket = null;
@@ -216,12 +220,14 @@ class ClientThread extends Thread {
 
     ClientThread(Socket clientSocket, String serverName, boolean run) throws NoSuchProviderException, NoSuchAlgorithmException {
         this.clientSocket = clientSocket;
+        username = serverName + "<-|";
         setKeywordsInMessages();
         if (run) communicateWithClient(clientSocket, serverName);
     }
 
     ClientThread(Socket clientSocket, String serverName){
         this.clientSocket = clientSocket;
+        username = serverName + "<-|";
     }
 
     protected void communicateWithClient(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException {
@@ -234,7 +240,6 @@ class ClientThread extends Thread {
             do{
                 try{
                     message = (String)is.readObject();
-                    System.out.println("Me> " + message);
                     reactToKeyword(message); //If keyword, will react
                 }
                 catch(ClassNotFoundException classnot){
@@ -260,6 +265,16 @@ class ClientThread extends Thread {
     protected void reactToKeyword(String keyword) throws IOException, NoSuchProviderException, NoSuchAlgorithmException {
         if (keyword.equals("end_connection")){
             sendMessage("end_connection");
+            System.out.println("Me> " + keyword);
+        }
+        else if (keyword.contains(":")){
+            if (keyword.split(":")[0].equals("name")){
+                username = username + keyword.split(":")[1];
+                System.out.println(username+"> My name is " +  keyword.split(":")[1]);
+            }
+        }
+        else{
+            System.out.println("Me> " + keyword);
         }
     }
 }
