@@ -14,17 +14,18 @@ import java.util.List;
  * THIS IS TO ABSTRACT AWAY SERVER/CLIENT SOCKET PROGRAMMING
  */
 public class PeerClient extends Thread{
-    private String name;
+    protected String name;
     private Server serverForPeering;
     private int port;
     protected boolean connectionEstablished;
-    private String connectedWithName;
-    private int connectedWithPort;
+    protected String connectedWithName;
+    protected int connectedWithPort;
 
     private ObjectOutputStream out;
+    protected ObjectInputStream in;
 
     private String hostName;
-    private int portNumToConnectTo;
+    protected int portNumToConnectTo;
 
     PeerClient(String clientName, int port){
         this.serverForPeering = new Server(port, clientName,this);
@@ -32,6 +33,7 @@ public class PeerClient extends Thread{
         connectionEstablished = false;
         this.name = clientName;
         serverForPeering.start();
+        this.connectedWithName = "Unknown";
 //        try {
 //            Thread.sleep(1000);
 //        } catch (InterruptedException e) {
@@ -56,26 +58,36 @@ public class PeerClient extends Thread{
 
         out = new ObjectOutputStream(communicationSocket.getOutputStream());
         out.flush();
-        ObjectInputStream in = new ObjectInputStream(communicationSocket.getInputStream());
-        String message = "";
+        in = new ObjectInputStream( communicationSocket.getInputStream() );
+        String message = "" ;
 
         do{
             try{
                 message = (String)in.readObject();
                 connectionEstablished = true;
-                System.out.println("Paired client> Name is: " + message);
-                connectedWithName = message;
-                connectedWithPort = portNumToConnectTo;
-                message = "I am " + name;
-                sendMessage(message);
-                //message = "end_connection";
-                //sendMessage(out, message);
+                processMessage(message);
             }
             catch(ClassNotFoundException classNot){
                 System.err.println("data received in unknown format");
             }
         }while(!message.equals("end_connection"));
 
+    }
+
+    //Method to process messages appropriately
+    protected void processMessage(String message) throws IOException {
+        if (message.contains(":")){
+            if (message.split(":")[0].equals("name")){
+                connectedWithName = message.split(":")[1];
+                connectedWithPort = portNumToConnectTo;
+                System.out.println(connectedWithName+"> My Name is: " + connectedWithName);
+                message = "I am " + name;
+                sendMessage(message);
+            }
+        }
+        else{
+            System.out.println(name + "> " + message);
+        }
     }
 
     public void run(){
@@ -111,7 +123,7 @@ public class PeerClient extends Thread{
         return port;
     }
 
-    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException {
+    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException {
         return new ClientThread(clientSocket,serverName,true );
     }
 }
@@ -217,7 +229,7 @@ class ClientThread extends Thread {
             os = new ObjectOutputStream(clientSocket.getOutputStream());
             os.flush();
             is = new ObjectInputStream(clientSocket.getInputStream());
-            sendMessage(serverName);
+            sendMessage("name:"+serverName);
             String message ="";
             do{
                 try{

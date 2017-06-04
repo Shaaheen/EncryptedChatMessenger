@@ -3,8 +3,10 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -77,7 +79,7 @@ public class TrustedCryptoServer extends PeerClient{
     }
 
     //Returns a trusted server thread - Communication thread for client
-    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException {
+    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException {
         System.out.println("OVERIDED METHOD " + keyPhraseForSharedKey);
         return new CertifiedClientThread( clientSocket, serverName, this );
     }
@@ -105,7 +107,7 @@ class CertifiedClient {
 class CertifiedClientThread extends ClientThread{
     private TrustedCryptoServer trustedCryptoServer;
 
-    CertifiedClientThread(Socket clientSocket, String serverName, TrustedCryptoServer trustedCryptoServer) throws NoSuchProviderException, NoSuchAlgorithmException {
+    CertifiedClientThread(Socket clientSocket, String serverName, TrustedCryptoServer trustedCryptoServer) throws NoSuchProviderException, NoSuchAlgorithmException, IOException {
         super(clientSocket, serverName);
         this.trustedCryptoServer = trustedCryptoServer;
         setKeywordsInMessages(); //Set new shared key request keyword
@@ -120,7 +122,7 @@ class CertifiedClientThread extends ClientThread{
     //Method to react to specific keywords
     // Will react to a shared key request by a client towards another client
     protected void reactToKeyword(String keyword) throws IOException, NoSuchProviderException, NoSuchAlgorithmException {
-        System.out.println("DIFF KEYWORDs: " + this.keywordsInMessages + " and keyword : " + keyword);
+        //System.out.println("DIFF KEYWORDs: " + this.keywordsInMessages + " and keyword : " + keyword);
         if (keyword.equals("end_connection")){
             sendMessage("end_connection");
         }
@@ -132,7 +134,14 @@ class CertifiedClientThread extends ClientThread{
             //If both clients are trusted by the server, then gen and pass on shared key
             if ( trustedCryptoServer.verifyThatClientsAreTrusted( clientA , clientB ) ){
                 byte[] keyBytes = trustedCryptoServer.generateNewSharedKey();
-                System.out.println("Generate New key : " + Arrays.toString( keyBytes ) );
+                System.out.println("Generate New key : "  + Arrays.toString( keyBytes ) /*+ new String( keyBytes, Charset.forName("UTF-8"))*/ );
+                //System.out.println(Arrays.toString(new String( keyBytes,"UTF8").getBytes()));
+                sendMessage( "sharedkey_incoming" );
+                os.writeInt(keyBytes.length);
+                os.write( keyBytes );
+
+                //sendMessage( "sharedkey=" + Arrays.toString( keyBytes )); /*+ Arrays.toString( keyBytes )*/
+                //System.out.println("Generate New key : " + new String( keyBytes, Charset.forName("UTF-8")) );
             }
             else{
                 System.out.println("One or more clients are not trusted by Server");
