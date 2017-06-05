@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -193,7 +194,16 @@ class Server extends Thread {
         notStopped = true;
         //create server socket and wait for connections
         try {
-            serverSocket = new ServerSocket(port);
+            try{
+                serverSocket = new ServerSocket(port);
+            }catch (SocketException e){
+                e.printStackTrace();
+                //Goes to next port until finds new available port
+                port++;
+                serverSocket = new ServerSocket(port);
+            }
+
+            serverSocket.setSoTimeout(15000);
             while (notStopped) {
                 System.out.println("Server waiting for clients on port " + port + "...");
 
