@@ -7,6 +7,9 @@ import org.bouncycastle.util.encoders.Hex;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Arrays;
@@ -17,6 +20,8 @@ import java.util.Arrays;
 public class SecureClient extends PeerClient{
     protected byte[] sharedKey;
     public static String ENCRYPTED_MESSAGE_KEYPHRASE = "encrypted_message_incoming";
+    public static String ENCRYPTED_FILE_KEYPHRASE = "encrypted_file_incoming-";
+
     private boolean startedCommunication;
     protected SecureClientThread currentSecureClientThread;
 
@@ -44,6 +49,8 @@ public class SecureClient extends PeerClient{
 //    }
 
     protected SecureConnection requestEncryptedConnectionWith( SecureClient clientToConnectTo , TrustedCryptoServer trustedCryptoServer ) throws IOException {
+        System.out.println();
+        System.out.println("GENERATING MASTER KEY AND SHARING IT...");
         requestSharedKeyWith( clientToConnectTo.getClientName() , trustedCryptoServer);
         try {
             Thread.sleep(3000);
@@ -56,6 +63,8 @@ public class SecureClient extends PeerClient{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println();
+        System.out.println("--- SECURE MESSAGING CHAT ---");
         SecureClient receivingClient = new SecureClient( clientToConnectTo.getClientName() , clientToConnectTo.getPort() , sharedKey);
         SecureClient clientWithConnection = new SecureClient( getClientName() , getPort() , sharedKey);
         clientWithConnection.prepareConnectionTo(receivingClient.getHostName(), receivingClient.getPort());
@@ -69,40 +78,77 @@ public class SecureClient extends PeerClient{
 
         return new SecureConnection(clientWithConnection, receivingClient,sharedKey);
 
-//        prepareConnectionTo(clientToConnectTo.getHostName(), clientToConnectTo.getPort());
-//        connectToPeer();
-
-        //return clientWithConnection;
-
     }
 
     protected void sendEncryptedMessage(String message) throws IOException, InvalidCipherTextException {
+        if ( startedCommunication ) {
+            sendMessage(ENCRYPTED_MESSAGE_KEYPHRASE);
+        } else{
+            currentSecureClientThread.sendMessage(ENCRYPTED_MESSAGE_KEYPHRASE);
+        }
+        sendEncryptedByteArray(message.getBytes());
+    }
+
+    private void sendEncryptedByteArray(byte[] input) throws IOException, InvalidCipherTextException {
         if ( startedCommunication ){
-            sendMessage( ENCRYPTED_MESSAGE_KEYPHRASE );
-            byte[] encryptedMessage = encryptWithAesKey( message.getBytes() , sharedKey );
-            System.out.println( getClientName() + "> Sending Encrypted message = "
-                            + byteArrayToHex(encryptedMessage) + " with key " + byteArrayToHex( sharedKey )
+            //sendMessage( ENCRYPTED_MESSAGE_KEYPHRASE );
+            byte[] encryptedMessage = encryptWithAesKey( input, sharedKey );
+            System.out.println(getClientName() + " is Sending Encrypted message = "
+                            + byteArrayToHex(encryptedMessage) + " with key " + byteArrayToHex(sharedKey)
             );
-            out.writeInt( encryptedMessage.length );
+            out.writeInt(encryptedMessage.length);
             out.write(encryptedMessage);
             out.flush();
+            System.out.println(getClientName() + " sent the file.");
         }
         else{
             if (currentSecureClientThread !=  null){
-                currentSecureClientThread.sendMessage(ENCRYPTED_MESSAGE_KEYPHRASE);
-                byte[] encryptedMessage = encryptWithAesKey( message.getBytes() , sharedKey );
-                System.out.println( getClientName() + "> Sending Encrypted message = "
+                //currentSecureClientThread.sendMessage(ENCRYPTED_MESSAGE_KEYPHRASE);
+                byte[] encryptedMessage = encryptWithAesKey(input, sharedKey);
+                System.out.println( getClientName() + " is Sending Encrypted message = "
                                 + byteArrayToHex(encryptedMessage) + " with key " + byteArrayToHex( sharedKey )
                 );
                 currentSecureClientThread.os.writeInt(encryptedMessage.length);
                 currentSecureClientThread.os.write(encryptedMessage);
+                System.out.println(getClientName() + " sent the file.");
                 currentSecureClientThread.os.flush();
             }
-//            if ( !getConnectedWithName().equals("Unknown") ){
-//                clientThread = serverForPeering.getClientThread(getConnectedWithName())
-//            }
 
         }
+    }
+
+    protected void sendEncryptedFile(String fileName, String filePath) throws IOException, InvalidCipherTextException {
+        Path fileLocation = Paths.get(filePath);
+        byte[] data = Files.readAllBytes(fileLocation);
+        System.out.println(getClientName() + " read in file.");
+
+        if ( startedCommunication ) {
+            sendMessage(ENCRYPTED_FILE_KEYPHRASE + fileName);
+        } else{
+            currentSecureClientThread.sendMessage(ENCRYPTED_FILE_KEYPHRASE + fileName);
+        }
+
+        sendEncryptedByteArray( data );
+
+    }
+
+    protected static void receiveAndStoreEncryptedFile( String fileName, ObjectInputStream objectInputStream, byte[] sharedKey, String clientName ) throws IOException, InvalidCipherTextException {
+        System.out.println(clientName + " is receiving encrypted file...");
+
+        int length = objectInputStream.readInt();//is.readInt();                    // read length of incoming message
+        byte[] encryptedMessage = new byte[1];
+        if(length>0) {
+            encryptedMessage = new byte[length];
+            objectInputStream.readFully(encryptedMessage, 0, encryptedMessage.length); // read the message
+        }
+
+        System.out.println(clientName + " has received Encrypted msg= " + SecureClient.byteArrayToHex(encryptedMessage));
+
+        FileOutputStream fos = new FileOutputStream(clientName + fileName);
+        fos.write( SecureClient.decryptWithAesKey(encryptedMessage, sharedKey) );
+        fos.close();
+
+        System.out.println(clientName + ">saved file : " + fileName);
 
     }
 
@@ -169,10 +215,10 @@ public class SecureClient extends PeerClient{
                 sharedKey = new byte[length];
                 in.readFully(sharedKey, 0, sharedKey.length); // read the message
             }
-            System.out.println(name + ">Received SharedKey: " + Arrays.toString( sharedKey ) );
+            System.out.println(name + " received SharedKey: " + SecureClient.byteArrayToHex( sharedKey ) );
         }
         else if (message.equals( SecureClient.ENCRYPTED_MESSAGE_KEYPHRASE )){
-            System.out.println(getClientName() + "> Receiving encrypted message...");
+            System.out.println(getClientName() + " receiving encrypted message...");
 
             int length = in.readInt();//is.readInt();                    // read length of incoming message
             byte[] encryptedMessage = new byte[1];
@@ -181,9 +227,15 @@ public class SecureClient extends PeerClient{
                 in.readFully(encryptedMessage, 0, encryptedMessage.length); // read the message
             }
 
-            System.out.println(getClientName() + "> Received Encrypted msg= " + SecureClient.byteArrayToHex(encryptedMessage));
+            System.out.println(getClientName() + " received Encrypted msg= " + SecureClient.byteArrayToHex(encryptedMessage));
             System.out.println( getClientName() + "> Decrypted msg= "
                     + new String( SecureClient.decryptWithAesKey( encryptedMessage, sharedKey ), "UTF-8" ) );
+        }
+        else if ( message.contains(SecureClient.ENCRYPTED_FILE_KEYPHRASE) ){
+            System.out.println(getClientName() + " is going to receive encrypted file...");
+
+            String fileName = message.split("-")[1];
+            SecureClient.receiveAndStoreEncryptedFile(fileName, in, sharedKey, getClientName());
         }
         else if (message.equals("end_connection")){
             sendMessage("end_connection");
@@ -200,7 +252,6 @@ public class SecureClient extends PeerClient{
 
     //Returns a trusted server thread - Communication thread for client
     protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException {
-        System.out.println("OVERIDED METHOD 2" );
         return new SecureClientThread( clientSocket, serverName, this );
     }
 }
@@ -238,19 +289,18 @@ class SecureClientThread extends ClientThread{
             }
         }
         else if (keyword.equals(TrustedCryptoServer.INCOMING_KEY_KEYWORD)){
-            System.out.println(secureClient.getClientName() + "> Receiving sharedkey...");
+            System.out.println(secureClient.getClientName() + " is receiving sharedkey...");
 
             int length = is.readInt();//is.readInt();                    // read length of incoming message
-            System.out.println("LENGTH IS " + length);
             if(length>0) {
                 secureClient.sharedKey = new byte[length];
                 is.readFully(secureClient.sharedKey, 0, secureClient.sharedKey.length); // read the message
             }
 
-            System.out.println(secureClient.name + ">Received SharedKey: " + Arrays.toString( secureClient.sharedKey ) );
+            System.out.println(secureClient.name + " received SharedKey: " + SecureClient.byteArrayToHex( secureClient.sharedKey ) );
         }
         else if (keyword.equals( SecureClient.ENCRYPTED_MESSAGE_KEYPHRASE )){
-            System.out.println(secureClient.getClientName() + "> Receiving encrypted message...");
+            System.out.println(secureClient.getClientName() + " is receiving an encrypted message...");
 
             int length = is.readInt();//is.readInt();                    // read length of incoming message
             byte[] encryptedMessage = new byte[1];
@@ -259,9 +309,15 @@ class SecureClientThread extends ClientThread{
                 is.readFully(encryptedMessage, 0, encryptedMessage.length); // read the message
             }
 
-            System.out.println( secureClient.name + "> Received Encrypted msg= " + SecureClient.byteArrayToHex( encryptedMessage ) );
+            System.out.println( secureClient.name + " received Encrypted msg= " + SecureClient.byteArrayToHex( encryptedMessage ) );
             System.out.println( secureClient.name + "> Decrypted msg= "
                     + new String( SecureClient.decryptWithAesKey( encryptedMessage, secureClient.sharedKey ), "UTF-8" ) );
+        }
+        else if ( keyword.contains( SecureClient.ENCRYPTED_FILE_KEYPHRASE ) ){
+            System.out.println( secureClient.getClientName() + " is going to receive encrypted file..." );
+
+            String fileName = keyword.split("-")[1];
+            SecureClient.receiveAndStoreEncryptedFile(fileName, is, secureClient.sharedKey , secureClient.getClientName());
         }
         else{
             System.out.println(username + "> " + keyword);

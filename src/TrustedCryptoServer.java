@@ -1,5 +1,6 @@
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -87,7 +88,6 @@ public class TrustedCryptoServer extends PeerClient{
 
     //Returns a trusted server thread - Communication thread for client
     protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException {
-        System.out.println("OVERIDED METHOD " + keyPhraseForSharedKey);
         return new CertifiedClientThread( clientSocket, serverName, this );
     }
 
@@ -140,7 +140,7 @@ class CertifiedClientThread extends ClientThread{
             //If both clients are trusted by the server, then gen and pass on shared key
             if ( trustedCryptoServer.verifyThatClientsAreTrusted( senderClient , requestedClient ) ){
                 byte[] keyBytes = trustedCryptoServer.generateNewSharedKey();
-                System.out.println("Generate New key : "  + Arrays.toString( keyBytes ) /*+ new String( keyBytes, Charset.forName("UTF-8"))*/ );
+                System.out.println("Generated new key : "  + SecureClient.byteArrayToHex(keyBytes) ); /*+ new String( keyBytes, Charset.forName("UTF-8"))*/
                 //System.out.println(Arrays.toString(new String( keyBytes,"UTF8").getBytes()));
                 sendMessage(TrustedCryptoServer.INCOMING_KEY_KEYWORD);
                 os.writeInt(keyBytes.length);
