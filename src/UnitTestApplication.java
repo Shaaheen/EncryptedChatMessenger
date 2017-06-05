@@ -6,6 +6,7 @@ import org.junit.Assert;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Key;
 
 public class UnitTestApplication {
     SecureClient clientA;
@@ -189,13 +190,15 @@ public class UnitTestApplication {
         String fileName3 = "techback.jpg";
         secureClientB.sendEncryptedFile( fileName3, fileName3 );
 
-        Path fileLocation = Paths.get(fileName3);
+        Path fileLocation = Paths.get(fileName);
         byte[] data = Files.readAllBytes(fileLocation);
+        String fileString1 = new String(data);
 
-        Path fileLocation2 = Paths.get(secureClientA.getClientName() + fileName3);
-        byte[] data2 = Files.readAllBytes(fileLocation);
+        Path fileLocation2 = Paths.get(secureClientB.getClientName() + fileName);
+        byte[] data2 = Files.readAllBytes(fileLocation2);
+        String fileString2 = new String(data2);
 
-        Assert.assertArrayEquals( data, data2 );
+        Assert.assertEquals(fileString2.substring(0, fileString2.length() - 4), fileString1);
 
         Thread.sleep(3000);
         secureClientA.closeConnection();
@@ -203,6 +206,60 @@ public class UnitTestApplication {
         //trustedCryptoServer.closeConnection();
         tearDown();
     }
+
+    //Testing RSA encryption/decryption
+    @Test
+    public void testRSAEncryption() throws Exception {
+        Key[] keys = SecureClient.getPublicPrivateKeyPair(1024);
+        String testString = "Testing stringy thingy wingy";
+        System.out.println("Orignal : " + testString);
+        String decryptedString = new String(SecureClient.decryptWithRSAKey( SecureClient.encryptWithRSAKey( testString.getBytes(), keys[1] ) , keys[0]) );
+        System.out.println("Private key : " + SecureClient.byteArrayToHex( keys[1].getEncoded() ));
+        System.out.println("Public key : " + SecureClient.byteArrayToHex( keys[0].getEncoded() ));
+        System.out.println("Encrypted : " + SecureClient.byteArrayToHex( SecureClient.encryptWithRSAKey( testString.getBytes(), keys[1] ) ));
+        System.out.println("Decrypted : " + decryptedString);
+        Assert.assertEquals( decryptedString , testString ) ;
+
+        //Test hash RSA encryption
+        System.out.println("Orig has: " + SecureClient.byteArrayToHex(SecureClient.hashByteArray(testString.getBytes())) );
+        System.out.println("Decrypted hash: " + SecureClient.byteArrayToHex(SecureClient.decryptWithRSAKey(SecureClient.encryptWithRSAKey(SecureClient.hashByteArray(testString.getBytes()),keys[1]),keys[0])));
+        Assert.assertArrayEquals(SecureClient.hashByteArray(testString.getBytes()), SecureClient.decryptWithRSAKey(SecureClient.encryptWithRSAKey(SecureClient.hashByteArray(testString.getBytes()),keys[1]),keys[0]));
+    }
+
+    //Used when client requests shared key from server
+    @Test
+    public void testAuthenticatedEncryptedMessaging() throws Exception{
+        trustedCryptoServer.certifyNewClient(clientA.getClientName(), clientA.getPort(), clientA.getHostName());
+        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );
+
+        //KEY REQUEST
+        SecureConnection clientAtoBConnection = clientA.requestEncryptedConnectionWith(clientB, trustedCryptoServer);
+        SecureClient secureClientA = clientAtoBConnection.getStartingClient();
+        SecureClient secureClientB = clientAtoBConnection.getReceivingClient();
+
+        Thread.sleep(1000);
+        String fileName3 = "testfile.txt";
+        secureClientA.sendEncryptedMessage( "encrypto bismo" );
+        secureClientB.sendEncryptedMessage( "Testing msg");
+        secureClientB.sendEncryptedFile(fileName3,fileName3);
+
+        Path fileLocation = Paths.get(fileName3);
+        byte[] data = Files.readAllBytes(fileLocation);
+        String fileString1 = new String(data);
+
+        Path fileLocation2 = Paths.get(secureClientA.getClientName() + fileName3);
+        byte[] data2 = Files.readAllBytes(fileLocation2);
+        String fileString2 = new String(data2);
+
+        Assert.assertEquals( fileString2.substring(0,fileString2.length() -4), fileString1 );
+
+        Thread.sleep(3000);
+        secureClientA.closeConnection();
+        secureClientB.stopServer();
+
+        tearDown();
+    }
+
 
     @After
     public void tearDown() throws Exception {

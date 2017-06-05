@@ -2,16 +2,12 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
-import java.security.Security;
+import java.security.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -87,7 +83,7 @@ public class TrustedCryptoServer extends PeerClient{
     }
 
     //Returns a trusted server thread - Communication thread for client
-    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException {
+    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
         return new CertifiedClientThread( clientSocket, serverName, this );
     }
 
@@ -113,7 +109,7 @@ public class TrustedCryptoServer extends PeerClient{
 class CertifiedClientThread extends ClientThread{
     private TrustedCryptoServer trustedCryptoServer;
 
-    CertifiedClientThread(Socket clientSocket, String serverName, TrustedCryptoServer trustedCryptoServer) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException {
+    CertifiedClientThread(Socket clientSocket, String serverName, TrustedCryptoServer trustedCryptoServer) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException {
         super(clientSocket, serverName);
         this.trustedCryptoServer = trustedCryptoServer;
         setKeywordsInMessages(); //Set new shared key request keyword

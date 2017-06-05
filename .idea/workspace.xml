@@ -2,12 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3f45f83f-be5d-4f46-ba26-36962e7b0a1d" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/CertifiedClient.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/CertifiedClient.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/CertifiedClientThread.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/CertifiedClientThread.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/ClientThread.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/ClientThread.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/PeerClient.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/PeerClient.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureClient.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureClient.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureClientThread.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureClientThread.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureConnection.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureConnection.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/Server.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/Server.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/TrustedCryptoServer.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/TrustedCryptoServer.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/UnitTestApplication.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/UnitTestApplication.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/PeerClient.java" afterPath="$PROJECT_DIR$/src/PeerClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SecureClient.java" afterPath="$PROJECT_DIR$/src/SecureClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/TrustedCryptoServer.java" afterPath="$PROJECT_DIR$/src/TrustedCryptoServer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/UnitTestApplication.java" afterPath="$PROJECT_DIR$/src/UnitTestApplication.java" />
@@ -37,34 +42,38 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="SecureClient.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SecureClient.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SecureClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1854" max-vertical-offset="6086">
-              <caret line="121" column="55" selection-start-line="121" selection-start-column="55" selection-end-line="121" selection-end-column="55" />
+            <state vertical-scroll-proportion="0.2970297" vertical-offset="4568" max-vertical-offset="8432">
+              <caret line="274" column="0" selection-start-line="274" selection-start-column="0" selection-end-line="274" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1474#1475#0" expanded="true" />
-                <element signature="e#1522#1523#0" expanded="true" />
-                <element signature="e#10811#10812#0" expanded="true" />
-                <element signature="e#10850#10851#0" expanded="true" />
-                <element signature="e#15297#15298#0" expanded="true" />
-                <element signature="e#15334#15335#0" expanded="true" />
-                <element signature="e#15382#15383#0" expanded="true" />
-                <element signature="e#15420#15421#0" expanded="true" />
+                <element signature="e#2001#2002#0" expanded="true" />
+                <element signature="e#2049#2050#0" expanded="true" />
+                <element signature="e#2227#2228#0" expanded="true" />
+                <element signature="e#2273#2274#0" expanded="true" />
+                <element signature="e#18322#18323#0" expanded="true" />
+                <element signature="e#18361#18362#0" expanded="true" />
+                <element signature="e#18988#18989#0" expanded="true" />
+                <element signature="e#19035#19036#0" expanded="true" />
+                <element signature="e#23548#23549#0" expanded="true" />
+                <element signature="e#23585#23586#0" expanded="true" />
+                <element signature="e#23633#23634#0" expanded="true" />
+                <element signature="e#23671#23672#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UnitTestApplication.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="UnitTestApplication.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/UnitTestApplication.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.29453683" vertical-offset="3140" max-vertical-offset="3791">
-              <caret line="192" column="55" selection-start-line="192" selection-start-column="55" selection-end-line="192" selection-end-column="55" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="3774" max-vertical-offset="4760">
+              <caret line="143" column="0" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <marker date="1496668864878" expanded="true" signature="6902:8452" placeholder="..." />
+                <marker date="1496688430713" expanded="true" signature="6928:8617" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -73,22 +82,22 @@
       <file leaf-file-name="PeerClient.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/PeerClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-3.607143" vertical-offset="2228" max-vertical-offset="5423">
-              <caret line="137" column="103" selection-start-line="137" selection-start-column="101" selection-end-line="137" selection-end-column="103" />
+            <state vertical-scroll-proportion="-2.0" vertical-offset="2154" max-vertical-offset="5831">
+              <caret line="130" column="20" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="20" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3715#3716#0" expanded="true" />
-                <element signature="e#3755#3756#0" expanded="true" />
-                <element signature="e#3796#3797#0" expanded="true" />
-                <element signature="e#3836#3837#0" expanded="true" />
-                <element signature="e#3872#3873#0" expanded="true" />
-                <element signature="e#3899#3900#0" expanded="true" />
-                <element signature="e#3927#3928#0" expanded="true" />
-                <element signature="e#3954#3955#0" expanded="true" />
-                <element signature="e#3988#3989#0" expanded="true" />
-                <element signature="e#4019#4020#0" expanded="true" />
-                <element signature="e#9023#9024#0" expanded="true" />
-                <element signature="e#9096#9097#0" expanded="true" />
+                <element signature="e#4669#4670#0" expanded="true" />
+                <element signature="e#4709#4710#0" expanded="true" />
+                <element signature="e#4750#4751#0" expanded="true" />
+                <element signature="e#4790#4791#0" expanded="true" />
+                <element signature="e#4826#4827#0" expanded="true" />
+                <element signature="e#4853#4854#0" expanded="true" />
+                <element signature="e#4881#4882#0" expanded="true" />
+                <element signature="e#4908#4909#0" expanded="true" />
+                <element signature="e#4942#4943#0" expanded="true" />
+                <element signature="e#4973#4974#0" expanded="true" />
+                <element signature="e#10629#10630#0" expanded="true" />
+                <element signature="e#10702#10703#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -97,12 +106,12 @@
       <file leaf-file-name="TrustedCryptoServer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/TrustedCryptoServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.821428" vertical-offset="2099" max-vertical-offset="3145">
-              <caret line="140" column="85" selection-start-line="140" selection-start-column="85" selection-end-line="140" selection-end-column="85" />
+            <state vertical-scroll-proportion="-8.607142" vertical-offset="1187" max-vertical-offset="3077">
+              <caret line="86" column="66" selection-start-line="86" selection-start-column="66" selection-end-line="86" selection-end-column="66" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#7307#7308#0" expanded="true" />
-                <element signature="e#7338#7339#0" expanded="true" />
+                <element signature="e#7316#7317#0" expanded="true" />
+                <element signature="e#7347#7348#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -119,9 +128,9 @@
         <option value="$PROJECT_DIR$/src/TestApplication.java" />
         <option value="$PROJECT_DIR$/src/Client.java" />
         <option value="$PROJECT_DIR$/src/Server.java" />
+        <option value="$PROJECT_DIR$/src/TrustedCryptoServer.java" />
         <option value="$PROJECT_DIR$/src/PeerClient.java" />
         <option value="$PROJECT_DIR$/src/SecureClient.java" />
-        <option value="$PROJECT_DIR$/src/TrustedCryptoServer.java" />
         <option value="$PROJECT_DIR$/src/UnitTestApplication.java" />
       </list>
     </option>
@@ -242,23 +251,6 @@
     </key>
   </component>
   <component name="RunManager" selected="JUnit.UnitTestApplication">
-    <configuration default="false" name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="MAIN_CLASS_NAME" value="Server" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="EncryptedChatMessenger" />
-      <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
     <configuration default="false" name="UnitTestApplication" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="EncryptedChatMessenger" />
@@ -325,6 +317,58 @@
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="UnitTestApplication" />
       <option name="METHOD_NAME" value="testEncryptedFileTransferConnection" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="UnitTestApplication.testRSAEncryption" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="EncryptedChatMessenger" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="UnitTestApplication" />
+      <option name="METHOD_NAME" value="testRSAEncryption" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="UnitTestApplication.testAuthenticatedEncryptedMessaging" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="EncryptedChatMessenger" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="UnitTestApplication" />
+      <option name="METHOD_NAME" value="testAuthenticatedEncryptedMessaging" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
@@ -589,18 +633,20 @@
       <envs />
       <method />
     </configuration>
-    <list size="4">
-      <item index="0" class="java.lang.String" itemvalue="Application.Server" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.UnitTestApplication" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testEncryptedMessagingConnection" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testEncryptedFileTransferConnection" />
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="JUnit.UnitTestApplication" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testEncryptedMessagingConnection" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testEncryptedFileTransferConnection" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testRSAEncryption" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testAuthenticatedEncryptedMessaging" />
     </list>
     <recent_temporary>
-      <list size="4">
+      <list size="5">
         <item index="0" class="java.lang.String" itemvalue="JUnit.UnitTestApplication" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testEncryptedFileTransferConnection" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testEncryptedMessagingConnection" />
-        <item index="3" class="java.lang.String" itemvalue="Application.Server" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testAuthenticatedEncryptedMessaging" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testRSAEncryption" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testEncryptedFileTransferConnection" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.UnitTestApplication.testEncryptedMessagingConnection" />
       </list>
     </recent_temporary>
   </component>
@@ -615,12 +661,12 @@
       <option name="number" value="Default" />
       <updated>1495725062281</updated>
       <workItem from="1495725067796" duration="783000" />
-      <workItem from="1496408699333" duration="89874000" />
+      <workItem from="1496408699333" duration="106155000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="90657000" />
+    <option name="totallyTimeSpent" value="106938000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
@@ -637,7 +683,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29141104" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.47239265" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18229954" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -649,7 +695,7 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4095092" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23312883" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -673,7 +719,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="29" />
+      <option name="time" value="30" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -688,14 +734,18 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1474#1475#0" expanded="true" />
-            <element signature="e#1522#1523#0" expanded="true" />
-            <element signature="e#10811#10812#0" expanded="true" />
-            <element signature="e#10850#10851#0" expanded="true" />
-            <element signature="e#15297#15298#0" expanded="true" />
-            <element signature="e#15334#15335#0" expanded="true" />
-            <element signature="e#15382#15383#0" expanded="true" />
-            <element signature="e#15420#15421#0" expanded="true" />
+            <element signature="e#2001#2002#0" expanded="true" />
+            <element signature="e#2049#2050#0" expanded="true" />
+            <element signature="e#2227#2228#0" expanded="true" />
+            <element signature="e#2273#2274#0" expanded="true" />
+            <element signature="e#18322#18323#0" expanded="true" />
+            <element signature="e#18361#18362#0" expanded="true" />
+            <element signature="e#18988#18989#0" expanded="true" />
+            <element signature="e#19035#19036#0" expanded="true" />
+            <element signature="e#23548#23549#0" expanded="true" />
+            <element signature="e#23585#23586#0" expanded="true" />
+            <element signature="e#23633#23634#0" expanded="true" />
+            <element signature="e#23671#23672#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -777,65 +827,69 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/PeerClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.607143" vertical-offset="2228" max-vertical-offset="5423">
-          <caret line="137" column="103" selection-start-line="137" selection-start-column="101" selection-end-line="137" selection-end-column="103" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3715#3716#0" expanded="true" />
-            <element signature="e#3755#3756#0" expanded="true" />
-            <element signature="e#3796#3797#0" expanded="true" />
-            <element signature="e#3836#3837#0" expanded="true" />
-            <element signature="e#3872#3873#0" expanded="true" />
-            <element signature="e#3899#3900#0" expanded="true" />
-            <element signature="e#3927#3928#0" expanded="true" />
-            <element signature="e#3954#3955#0" expanded="true" />
-            <element signature="e#3988#3989#0" expanded="true" />
-            <element signature="e#4019#4020#0" expanded="true" />
-            <element signature="e#9023#9024#0" expanded="true" />
-            <element signature="e#9096#9097#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/TrustedCryptoServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.821428" vertical-offset="2099" max-vertical-offset="3145">
-          <caret line="140" column="85" selection-start-line="140" selection-start-column="85" selection-end-line="140" selection-end-column="85" />
+        <state vertical-scroll-proportion="-8.607142" vertical-offset="1187" max-vertical-offset="3077">
+          <caret line="86" column="66" selection-start-line="86" selection-start-column="66" selection-end-line="86" selection-end-column="66" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#7307#7308#0" expanded="true" />
-            <element signature="e#7338#7339#0" expanded="true" />
+            <element signature="e#7316#7317#0" expanded="true" />
+            <element signature="e#7347#7348#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/SecureClient.java">
+    <entry file="file://$PROJECT_DIR$/src/PeerClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1854" max-vertical-offset="6086">
-          <caret line="121" column="55" selection-start-line="121" selection-start-column="55" selection-end-line="121" selection-end-column="55" />
+        <state vertical-scroll-proportion="-2.0" vertical-offset="2154" max-vertical-offset="5831">
+          <caret line="130" column="20" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="20" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1474#1475#0" expanded="true" />
-            <element signature="e#1522#1523#0" expanded="true" />
-            <element signature="e#10811#10812#0" expanded="true" />
-            <element signature="e#10850#10851#0" expanded="true" />
-            <element signature="e#15297#15298#0" expanded="true" />
-            <element signature="e#15334#15335#0" expanded="true" />
-            <element signature="e#15382#15383#0" expanded="true" />
-            <element signature="e#15420#15421#0" expanded="true" />
+            <element signature="e#4669#4670#0" expanded="true" />
+            <element signature="e#4709#4710#0" expanded="true" />
+            <element signature="e#4750#4751#0" expanded="true" />
+            <element signature="e#4790#4791#0" expanded="true" />
+            <element signature="e#4826#4827#0" expanded="true" />
+            <element signature="e#4853#4854#0" expanded="true" />
+            <element signature="e#4881#4882#0" expanded="true" />
+            <element signature="e#4908#4909#0" expanded="true" />
+            <element signature="e#4942#4943#0" expanded="true" />
+            <element signature="e#4973#4974#0" expanded="true" />
+            <element signature="e#10629#10630#0" expanded="true" />
+            <element signature="e#10702#10703#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/UnitTestApplication.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.29453683" vertical-offset="3140" max-vertical-offset="3791">
-          <caret line="192" column="55" selection-start-line="192" selection-start-column="55" selection-end-line="192" selection-end-column="55" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3774" max-vertical-offset="4760">
+          <caret line="143" column="0" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1496668864878" expanded="true" signature="6902:8452" placeholder="..." />
+            <marker date="1496688430713" expanded="true" signature="6928:8617" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/SecureClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2970297" vertical-offset="4568" max-vertical-offset="8432">
+          <caret line="274" column="0" selection-start-line="274" selection-start-column="0" selection-end-line="274" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2001#2002#0" expanded="true" />
+            <element signature="e#2049#2050#0" expanded="true" />
+            <element signature="e#2227#2228#0" expanded="true" />
+            <element signature="e#2273#2274#0" expanded="true" />
+            <element signature="e#18322#18323#0" expanded="true" />
+            <element signature="e#18361#18362#0" expanded="true" />
+            <element signature="e#18988#18989#0" expanded="true" />
+            <element signature="e#19035#19036#0" expanded="true" />
+            <element signature="e#23548#23549#0" expanded="true" />
+            <element signature="e#23585#23586#0" expanded="true" />
+            <element signature="e#23633#23634#0" expanded="true" />
+            <element signature="e#23671#23672#0" expanded="true" />
           </folding>
         </state>
       </provider>

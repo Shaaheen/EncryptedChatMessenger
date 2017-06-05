@@ -1,10 +1,14 @@
 import org.bouncycastle.crypto.InvalidCipherTextException;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
@@ -54,7 +58,7 @@ public class PeerClient extends Thread{
         this.portNumToConnectTo = portNumToConnectTo;
     }
 
-    protected void connectToPeer() throws IOException, InvalidCipherTextException {
+    protected void connectToPeer() throws IOException, InvalidCipherTextException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchProviderException, InvalidKeyException {
 
         Socket communicationSocket = new Socket(hostName, portNumToConnectTo);
 
@@ -77,7 +81,7 @@ public class PeerClient extends Thread{
     }
 
     //Method to process messages appropriately
-    protected void processMessage(String message) throws IOException, InvalidCipherTextException {
+    protected void processMessage(String message) throws IOException, InvalidCipherTextException, BadPaddingException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, InvalidKeyException, ClassNotFoundException {
         if (message.contains(":")){
             if (message.split(":")[0].equals("name")){
                 connectedWithName = message.split(":")[1];
@@ -102,6 +106,18 @@ public class PeerClient extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InvalidCipherTextException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
             e.printStackTrace();
         }
     }
@@ -135,7 +151,7 @@ public class PeerClient extends Thread{
         return hostName;
     }
 
-    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException {
+    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
         return new ClientThread(clientSocket,serverName,true );
     }
 }
@@ -200,6 +216,14 @@ class Server extends Thread {
                     e.printStackTrace();
                 } catch (InvalidCipherTextException e) {
                     e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    e.printStackTrace();
+                } catch (NoSuchPaddingException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
                 }
                 clients.add(t);
                 t.start();
@@ -247,7 +271,7 @@ class ClientThread extends Thread {
 
     protected List keywordsInMessages;
 
-    ClientThread(Socket clientSocket, String serverName, boolean run) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException {
+    ClientThread(Socket clientSocket, String serverName, boolean run) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException {
         this.clientSocket = clientSocket;
         username = "|-> " + serverName ;
         setKeywordsInMessages();
@@ -259,7 +283,7 @@ class ClientThread extends Thread {
         username = "|-> " + serverName ;
     }
 
-    protected void communicateWithClient(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException {
+    protected void communicateWithClient(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
         try{
             os = new ObjectOutputStream(clientSocket.getOutputStream());
             os.flush();
@@ -296,7 +320,7 @@ class ClientThread extends Thread {
         os.flush();
     }
 
-    protected void reactToKeyword(String keyword) throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException {
+    protected void reactToKeyword(String keyword) throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, ClassNotFoundException {
         if (keyword.equals("end_connection")){
             sendMessage("end_connection");
             System.out.println( username + "> " + keyword);
