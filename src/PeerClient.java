@@ -40,12 +40,6 @@ public class PeerClient extends Thread{
         this.name = clientName;
         serverForPeering.start();
         this.connectedWithName = "Unknown";
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        //serverForPeering.run();
     }
 
     protected void stopServer() throws IOException {

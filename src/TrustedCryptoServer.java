@@ -43,7 +43,6 @@ public class TrustedCryptoServer extends PeerClient{
     protected byte[] generateNewSharedKey() throws NoSuchAlgorithmException, NoSuchProviderException {
 
         Security.addProvider(new BouncyCastleProvider());
-        //KeyGenerator.getInstance("AES/CBC/PKCS5Padding", "BC");
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
         SecureRandom rand = new SecureRandom();
         keyGen.init(rand);

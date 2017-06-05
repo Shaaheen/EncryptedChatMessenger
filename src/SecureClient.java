@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 /**
  * Created by Shaaheen on 25-May-17.
+ * Peer Client with the secure communication capabilities - encrypted messages and signing messaging
  */
 public class SecureClient extends PeerClient{
     protected byte[] sharedKey;
@@ -29,10 +30,10 @@ public class SecureClient extends PeerClient{
     public static String ENCRYPTED_FILE_KEYPHRASE = "encrypted_file_incoming-";
     public static String SIGN_AUTHENTICATION_KEYPHRASE = "signature_incoming";
 
-    private boolean startedCommunication;
-    protected SecureClientThread currentSecureClientThread;
-    private Key[] publicPrivateKeyPair;
-    private SecureConnection secureConnectionWithPeer;
+    private boolean startedCommunication; //boolean to tell if client that started communication
+    protected SecureClientThread currentSecureClientThread; //Server side communicator
+    private Key[] publicPrivateKeyPair; //RSA key pair - public and private keys
+    private SecureConnection secureConnectionWithPeer; //Connection object reperesenting secure peer connection
 
     SecureClient(String clientName, int port) {
         super(clientName, port);
@@ -62,14 +63,16 @@ public class SecureClient extends PeerClient{
         return publicPrivateKeyPair[0];
     }
 
-//    protected void requestEncryptedConnectionWith( String peerClientName ) throws IOException {
-//        requestSharedKeyWith( peerClientName, );
-//
-//    }
-
+    /**
+     * Method to establish secure connection between peers through a trusted 3rd party server
+     * @param clientToConnectTo
+     * @param trustedCryptoServer
+     * @return Object representing connection between peers
+     */
     protected SecureConnection requestEncryptedConnectionWith( SecureClient clientToConnectTo , TrustedCryptoServer trustedCryptoServer ) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         System.out.println();
         System.out.println("GENERATING MASTER KEY AND SHARING IT...");
+        //Get sharedkey
         requestSharedKeyWith( clientToConnectTo.getClientName() , trustedCryptoServer);
         try {
             Thread.sleep(3000);
@@ -87,6 +90,7 @@ public class SecureClient extends PeerClient{
         SecureClient receivingClient = new SecureClient( clientToConnectTo.getClientName() , clientToConnectTo.getPort() , sharedKey);
         SecureClient clientWithConnection = new SecureClient( getClientName() , getPort() , sharedKey);
 
+        //Gen RSA keys for each clients
         receivingClient.setPublicPrivateKeyPair( SecureClient.getPublicPrivateKeyPair(1024) );
         clientWithConnection.setPublicPrivateKeyPair( SecureClient.getPublicPrivateKeyPair(1024) );
 
@@ -115,6 +119,10 @@ public class SecureClient extends PeerClient{
         sendEncryptedByteArray(message.getBytes());
     }
 
+    /**
+     * Encyrpt input and send to peer
+     * @param input
+     */
     private void sendEncryptedByteArray(byte[] input) throws IOException, InvalidCipherTextException, BadPaddingException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, InvalidKeyException {
         if ( startedCommunication ){
             //sendMessage( ENCRYPTED_MESSAGE_KEYPHRASE );
@@ -125,6 +133,7 @@ public class SecureClient extends PeerClient{
             out.writeInt(encryptedMessage.length);
             out.write(encryptedMessage);
             out.flush();
+            //Sign message
             sendMessage(SIGN_AUTHENTICATION_KEYPHRASE);
             byte[] signature = getSignForMessage( encryptedMessage );
             out.writeInt(signature.length);
@@ -144,6 +153,7 @@ public class SecureClient extends PeerClient{
                 currentSecureClientThread.os.write(encryptedMessage);
                 currentSecureClientThread.os.flush();
 
+                //Sign message
                 currentSecureClientThread.sendMessage(SIGN_AUTHENTICATION_KEYPHRASE);
                 byte[] signature = getSignForMessage( encryptedMessage );
                 currentSecureClientThread.os.writeInt(signature.length);
@@ -170,16 +180,26 @@ public class SecureClient extends PeerClient{
 
     }
 
+    /**
+     * Method to authenticate a message using RSA encryption
+     * Checks if decrypted signature is the same as the hash of the message
+     * @param encryptedMessage
+     * @param is - Input Stream
+     * @param secureClient
+     * @return if successful
+     */
     protected static boolean authenticateMessage(byte[] encryptedMessage, ObjectInputStream is, SecureClient secureClient) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchProviderException, NoSuchPaddingException, InvalidCipherTextException {
         String authenticationReq = (String)is.readObject();
         if (authenticationReq.equals(SecureClient.SIGN_AUTHENTICATION_KEYPHRASE)){
             System.out.println(secureClient.getClientName() + " is authenticating message...");
+            //Gets signature
             int lengthAuth = is.readInt();//is.readInt();                    // read length of incoming message
             byte[] signature = new byte[1];
             if(lengthAuth>0) {
                 signature = new byte[lengthAuth];
                 is.readFully(signature, 0, signature.length); // read the message
             }
+            //Decrypt using peer clients public key
             byte[] decryptedSign = SecureClient.decryptWithRSAKey( signature , secureClient.getSecureConnectionWithPeer().getOtherPublicKey(secureClient.getClientName()) );
             System.out.println("Decrypted sign : "+  SecureClient.byteArrayToHex(decryptedSign) + " with pubkey :" + SecureClient.byteArrayToHex(secureClient.getSecureConnectionWithPeer().getOtherPublicKey(secureClient.getClientName()).getEncoded()) );
             if ( Arrays.equals(decryptedSign, SecureClient.hashByteArray(encryptedMessage)) ){
@@ -197,17 +217,32 @@ public class SecureClient extends PeerClient{
         }
     }
 
+    /**
+     * Signs message using private key of client
+     * @param messageData
+     * @return encrypted signature
+     */
     protected byte[] getSignForMessage(byte[] messageData) throws NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchProviderException, NoSuchPaddingException {
         //Encrypt the hash of the message with the private key
         System.out.println("Orig hash message : " + byteArrayToHex(hashByteArray(messageData)) + " need pubkey : " + byteArrayToHex(publicPrivateKeyPair[0].getEncoded()));
         return ( SecureClient.encryptWithRSAKey( hashByteArray(messageData), publicPrivateKeyPair[1] ) );
     }
 
+    /**
+     * Hash function for signing messages
+     * @param input
+     * @return
+     */
     protected static byte[] hashByteArray( byte[] input ) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         return digest.digest( input );
     }
 
+    /**
+     * Generate RSA public/private key pairs
+     * @param lengthOfKeys
+     * @return
+     */
     protected static Key[] getPublicPrivateKeyPair(int lengthOfKeys) throws NoSuchProviderException, NoSuchAlgorithmException, NoSuchPaddingException {
         Key[] keyPair = new Key[2];
         Security.addProvider(new BouncyCastleProvider());
@@ -309,7 +344,7 @@ public class SecureClient extends PeerClient{
         sendSharedKeyRequestMessage( peerClientName );
     }
 
-    //Method to process messages appropriately with sharedkey processing
+    //Method to process messages appropriately -
     protected void processMessage(String message) throws IOException, InvalidCipherTextException, BadPaddingException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, InvalidKeyException, ClassNotFoundException {
         if (message.contains(":")){
             if (message.split(":")[0].equals("name")){
@@ -394,15 +429,13 @@ class SecureClientThread extends ClientThread{
 
     }
 
-    //Add shared key to key word reaction list
+
     protected void setKeywordsInMessages(){
         this.keywordsInMessages = Arrays.asList( "end_connection" , TrustedCryptoServer.INCOMING_KEY_KEYWORD );
     }
 
     //Method to react to specific keywords
-    // Will react to a shared key request by a client towards another client
     protected void reactToKeyword(String keyword) throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, ClassNotFoundException {
-        //System.out.println("DIFF KEYWORDs: " + this.keywordsInMessages + " and keyword : " + keyword);
         if (keyword.equals("end_connection")){
             sendMessage("end_connection");
         }
@@ -426,6 +459,7 @@ class SecureClientThread extends ClientThread{
         else if (keyword.equals( SecureClient.ENCRYPTED_MESSAGE_KEYPHRASE )){
             System.out.println(secureClient.getClientName() + " is receiving an encrypted message...");
 
+            //Read in encrypted message
             int length = is.readInt();//is.readInt();                    // read length of incoming message
             byte[] encryptedMessage = new byte[1];
             if(length>0) {
@@ -433,6 +467,7 @@ class SecureClientThread extends ClientThread{
                 is.readFully(encryptedMessage, 0, encryptedMessage.length); // read the message
             }
 
+            //Authenticate message
             if (SecureClient.authenticateMessage(encryptedMessage, is, secureClient)){
                 System.out.println( secureClient.name + " received Encrypted msg= " + SecureClient.byteArrayToHex( encryptedMessage ) );
                 System.out.println("----------------");

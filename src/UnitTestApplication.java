@@ -119,7 +119,10 @@ public class UnitTestApplication {
         tearDown();
     }
 
-    //Used when client requests shared key from server
+    /**
+     * Tests AES encryption and decryption on the peer connection
+     * @throws Exception
+     */
     @Test
     public void testEncryptionAndDecryptionConnection() throws Exception{
         trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort(), clientA.getHostName() );
@@ -145,7 +148,10 @@ public class UnitTestApplication {
         tearDown();
     }
 
-    //Used when client requests shared key from server
+    /**
+     * Tests establishing the secure connection between clients
+     * @throws Exception
+     */
     @Test
     public void testEncryptedMessagingConnection() throws Exception{
         trustedCryptoServer.certifyNewClient(clientA.getClientName(), clientA.getPort(), clientA.getHostName());
@@ -168,7 +174,10 @@ public class UnitTestApplication {
         tearDown();
     }
 
-    //Used when client requests shared key from server
+    /**
+     * Tests transferring files accross connection
+      * @throws Exception
+     */
     @Test
     public void testEncryptedFileTransferConnection() throws Exception{
         trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort(), clientA.getHostName() );
@@ -183,9 +192,6 @@ public class UnitTestApplication {
         Thread.sleep(1000);
         String fileName = "testfile.txt";
         secureClientA.sendEncryptedFile( fileName, fileName );
-
-//        String fileName2 = "techback.jpg";
-//        secureClientA.sendEncryptedFile( fileName2, fileName2 );
 
         String fileName3 = "techback.jpg";
         secureClientB.sendEncryptedFile( fileName3, fileName3 );
@@ -203,11 +209,13 @@ public class UnitTestApplication {
         Thread.sleep(3000);
         secureClientA.closeConnection();
         secureClientB.stopServer();
-        //trustedCryptoServer.closeConnection();
         tearDown();
     }
 
-    //Testing RSA encryption/decryption
+    /**
+     * Tests RSA encryption
+     * @throws Exception
+     */
     @Test
     public void testRSAEncryption() throws Exception {
         Key[] keys = SecureClient.getPublicPrivateKeyPair(1024);
@@ -226,7 +234,10 @@ public class UnitTestApplication {
         Assert.assertArrayEquals(SecureClient.hashByteArray(testString.getBytes()), SecureClient.decryptWithRSAKey(SecureClient.encryptWithRSAKey(SecureClient.hashByteArray(testString.getBytes()),keys[1]),keys[0]));
     }
 
-    //Used when client requests shared key from server
+    /**
+     * Tests authentication messaging
+     * @throws Exception
+     */
     @Test
     public void testAuthenticatedEncryptedMessaging() throws Exception{
         trustedCryptoServer.certifyNewClient(clientA.getClientName(), clientA.getPort(), clientA.getHostName());
@@ -239,6 +250,7 @@ public class UnitTestApplication {
 
         Thread.sleep(1000);
         String fileName3 = "testfile.txt";
+        //Test messages
         secureClientA.sendEncryptedMessage( "encrypto bismo" );
         secureClientB.sendEncryptedMessage( "Testing msg");
         secureClientB.sendEncryptedFile(fileName3,fileName3);

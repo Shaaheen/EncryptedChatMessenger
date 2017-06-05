@@ -2,21 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3f45f83f-be5d-4f46-ba26-36962e7b0a1d" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/CertifiedClient.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/CertifiedClient.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/CertifiedClientThread.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/CertifiedClientThread.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/ClientThread.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/ClientThread.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/PeerClient.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/PeerClient.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureClient.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureClient.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureClientThread.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureClientThread.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureConnection.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/SecureConnection.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/Server.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/Server.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/TrustedCryptoServer.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/TrustedCryptoServer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/UnitTestApplication.class" afterPath="$PROJECT_DIR$/out/production/EncryptedChatMessenger/UnitTestApplication.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/PeerClient.java" afterPath="$PROJECT_DIR$/src/PeerClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SecureClient.java" afterPath="$PROJECT_DIR$/src/SecureClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/TrustedCryptoServer.java" afterPath="$PROJECT_DIR$/src/TrustedCryptoServer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/UnitTestApplication.java" afterPath="$PROJECT_DIR$/src/UnitTestApplication.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="EncryptedChatMessenger.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -45,22 +34,22 @@
       <file leaf-file-name="SecureClient.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SecureClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.2970297" vertical-offset="4568" max-vertical-offset="8432">
-              <caret line="274" column="0" selection-start-line="274" selection-start-column="0" selection-end-line="274" selection-end-column="0" />
+            <state vertical-scroll-proportion="21.38564" vertical-offset="0" max-vertical-offset="9027">
+              <caret line="473" column="33" selection-start-line="473" selection-start-column="33" selection-end-line="473" selection-end-column="33" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2001#2002#0" expanded="true" />
-                <element signature="e#2049#2050#0" expanded="true" />
-                <element signature="e#2227#2228#0" expanded="true" />
-                <element signature="e#2273#2274#0" expanded="true" />
-                <element signature="e#18322#18323#0" expanded="true" />
-                <element signature="e#18361#18362#0" expanded="true" />
-                <element signature="e#18988#18989#0" expanded="true" />
-                <element signature="e#19035#19036#0" expanded="true" />
-                <element signature="e#23548#23549#0" expanded="true" />
-                <element signature="e#23585#23586#0" expanded="true" />
-                <element signature="e#23633#23634#0" expanded="true" />
-                <element signature="e#23671#23672#0" expanded="true" />
+                <element signature="e#2282#2283#0" expanded="true" />
+                <element signature="e#2330#2331#0" expanded="true" />
+                <element signature="e#2508#2509#0" expanded="true" />
+                <element signature="e#2554#2555#0" expanded="true" />
+                <element signature="e#19525#19526#0" expanded="true" />
+                <element signature="e#19564#19565#0" expanded="true" />
+                <element signature="e#20191#20192#0" expanded="true" />
+                <element signature="e#20238#20239#0" expanded="true" />
+                <element signature="e#24598#24599#0" expanded="true" />
+                <element signature="e#24635#24636#0" expanded="true" />
+                <element signature="e#24683#24684#0" expanded="true" />
+                <element signature="e#24721#24722#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -69,11 +58,11 @@
       <file leaf-file-name="UnitTestApplication.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/UnitTestApplication.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3774" max-vertical-offset="4760">
-              <caret line="143" column="0" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4964">
+              <caret line="271" column="19" selection-start-line="271" selection-start-column="19" selection-end-line="271" selection-end-column="19" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <marker date="1496688430713" expanded="true" signature="6928:8617" placeholder="..." />
+                <marker date="1496693445817" expanded="true" signature="7038:8595" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -82,22 +71,22 @@
       <file leaf-file-name="PeerClient.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/PeerClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-2.0" vertical-offset="2154" max-vertical-offset="5831">
-              <caret line="130" column="20" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="20" />
+            <state vertical-scroll-proportion="167.28572" vertical-offset="5381" max-vertical-offset="5729">
+              <caret line="41" column="43" selection-start-line="41" selection-start-column="43" selection-end-line="41" selection-end-column="43" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#4669#4670#0" expanded="true" />
-                <element signature="e#4709#4710#0" expanded="true" />
-                <element signature="e#4750#4751#0" expanded="true" />
-                <element signature="e#4790#4791#0" expanded="true" />
-                <element signature="e#4826#4827#0" expanded="true" />
-                <element signature="e#4853#4854#0" expanded="true" />
-                <element signature="e#4881#4882#0" expanded="true" />
-                <element signature="e#4908#4909#0" expanded="true" />
-                <element signature="e#4942#4943#0" expanded="true" />
-                <element signature="e#4973#4974#0" expanded="true" />
-                <element signature="e#10629#10630#0" expanded="true" />
-                <element signature="e#10702#10703#0" expanded="true" />
+                <element signature="e#4493#4494#0" expanded="true" />
+                <element signature="e#4533#4534#0" expanded="true" />
+                <element signature="e#4574#4575#0" expanded="true" />
+                <element signature="e#4614#4615#0" expanded="true" />
+                <element signature="e#4650#4651#0" expanded="true" />
+                <element signature="e#4677#4678#0" expanded="true" />
+                <element signature="e#4705#4706#0" expanded="true" />
+                <element signature="e#4732#4733#0" expanded="true" />
+                <element signature="e#4766#4767#0" expanded="true" />
+                <element signature="e#4797#4798#0" expanded="true" />
+                <element signature="e#10453#10454#0" expanded="true" />
+                <element signature="e#10526#10527#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -106,12 +95,12 @@
       <file leaf-file-name="TrustedCryptoServer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/TrustedCryptoServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.607142" vertical-offset="1187" max-vertical-offset="3077">
-              <caret line="86" column="66" selection-start-line="86" selection-start-column="66" selection-end-line="86" selection-end-column="66" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2684" max-vertical-offset="3060">
+              <caret line="43" column="0" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#7316#7317#0" expanded="true" />
-                <element signature="e#7347#7348#0" expanded="true" />
+                <element signature="e#7250#7251#0" expanded="true" />
+                <element signature="e#7281#7282#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -128,10 +117,10 @@
         <option value="$PROJECT_DIR$/src/TestApplication.java" />
         <option value="$PROJECT_DIR$/src/Client.java" />
         <option value="$PROJECT_DIR$/src/Server.java" />
-        <option value="$PROJECT_DIR$/src/TrustedCryptoServer.java" />
-        <option value="$PROJECT_DIR$/src/PeerClient.java" />
         <option value="$PROJECT_DIR$/src/SecureClient.java" />
         <option value="$PROJECT_DIR$/src/UnitTestApplication.java" />
+        <option value="$PROJECT_DIR$/src/PeerClient.java" />
+        <option value="$PROJECT_DIR$/src/TrustedCryptoServer.java" />
       </list>
     </option>
   </component>
@@ -661,12 +650,12 @@
       <option name="number" value="Default" />
       <updated>1495725062281</updated>
       <workItem from="1495725067796" duration="783000" />
-      <workItem from="1496408699333" duration="106155000" />
+      <workItem from="1496408699333" duration="109971000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="106938000" />
+    <option name="totallyTimeSpent" value="110754000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
@@ -683,7 +672,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.47239265" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36042944" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18229954" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -734,18 +723,18 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2001#2002#0" expanded="true" />
-            <element signature="e#2049#2050#0" expanded="true" />
-            <element signature="e#2227#2228#0" expanded="true" />
-            <element signature="e#2273#2274#0" expanded="true" />
-            <element signature="e#18322#18323#0" expanded="true" />
-            <element signature="e#18361#18362#0" expanded="true" />
-            <element signature="e#18988#18989#0" expanded="true" />
-            <element signature="e#19035#19036#0" expanded="true" />
-            <element signature="e#23548#23549#0" expanded="true" />
-            <element signature="e#23585#23586#0" expanded="true" />
-            <element signature="e#23633#23634#0" expanded="true" />
-            <element signature="e#23671#23672#0" expanded="true" />
+            <element signature="e#2282#2283#0" expanded="true" />
+            <element signature="e#2330#2331#0" expanded="true" />
+            <element signature="e#2508#2509#0" expanded="true" />
+            <element signature="e#2554#2555#0" expanded="true" />
+            <element signature="e#19525#19526#0" expanded="true" />
+            <element signature="e#19564#19565#0" expanded="true" />
+            <element signature="e#20191#20192#0" expanded="true" />
+            <element signature="e#20238#20239#0" expanded="true" />
+            <element signature="e#24598#24599#0" expanded="true" />
+            <element signature="e#24635#24636#0" expanded="true" />
+            <element signature="e#24683#24684#0" expanded="true" />
+            <element signature="e#24721#24722#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -827,69 +816,69 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/TrustedCryptoServer.java">
+    <entry file="file://$PROJECT_DIR$/src/UnitTestApplication.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.607142" vertical-offset="1187" max-vertical-offset="3077">
-          <caret line="86" column="66" selection-start-line="86" selection-start-column="66" selection-end-line="86" selection-end-column="66" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4964">
+          <caret line="271" column="19" selection-start-line="271" selection-start-column="19" selection-end-line="271" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#7316#7317#0" expanded="true" />
-            <element signature="e#7347#7348#0" expanded="true" />
+            <marker date="1496693445817" expanded="true" signature="7038:8595" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PeerClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.0" vertical-offset="2154" max-vertical-offset="5831">
-          <caret line="130" column="20" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="20" />
+        <state vertical-scroll-proportion="167.28572" vertical-offset="5381" max-vertical-offset="5729">
+          <caret line="41" column="43" selection-start-line="41" selection-start-column="43" selection-end-line="41" selection-end-column="43" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4669#4670#0" expanded="true" />
-            <element signature="e#4709#4710#0" expanded="true" />
-            <element signature="e#4750#4751#0" expanded="true" />
-            <element signature="e#4790#4791#0" expanded="true" />
-            <element signature="e#4826#4827#0" expanded="true" />
-            <element signature="e#4853#4854#0" expanded="true" />
-            <element signature="e#4881#4882#0" expanded="true" />
-            <element signature="e#4908#4909#0" expanded="true" />
-            <element signature="e#4942#4943#0" expanded="true" />
-            <element signature="e#4973#4974#0" expanded="true" />
-            <element signature="e#10629#10630#0" expanded="true" />
-            <element signature="e#10702#10703#0" expanded="true" />
+            <element signature="e#4493#4494#0" expanded="true" />
+            <element signature="e#4533#4534#0" expanded="true" />
+            <element signature="e#4574#4575#0" expanded="true" />
+            <element signature="e#4614#4615#0" expanded="true" />
+            <element signature="e#4650#4651#0" expanded="true" />
+            <element signature="e#4677#4678#0" expanded="true" />
+            <element signature="e#4705#4706#0" expanded="true" />
+            <element signature="e#4732#4733#0" expanded="true" />
+            <element signature="e#4766#4767#0" expanded="true" />
+            <element signature="e#4797#4798#0" expanded="true" />
+            <element signature="e#10453#10454#0" expanded="true" />
+            <element signature="e#10526#10527#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/UnitTestApplication.java">
+    <entry file="file://$PROJECT_DIR$/src/TrustedCryptoServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3774" max-vertical-offset="4760">
-          <caret line="143" column="0" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2684" max-vertical-offset="3060">
+          <caret line="43" column="0" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1496688430713" expanded="true" signature="6928:8617" placeholder="..." />
+            <element signature="e#7250#7251#0" expanded="true" />
+            <element signature="e#7281#7282#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/SecureClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2970297" vertical-offset="4568" max-vertical-offset="8432">
-          <caret line="274" column="0" selection-start-line="274" selection-start-column="0" selection-end-line="274" selection-end-column="0" />
+        <state vertical-scroll-proportion="21.38564" vertical-offset="0" max-vertical-offset="9027">
+          <caret line="473" column="33" selection-start-line="473" selection-start-column="33" selection-end-line="473" selection-end-column="33" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2001#2002#0" expanded="true" />
-            <element signature="e#2049#2050#0" expanded="true" />
-            <element signature="e#2227#2228#0" expanded="true" />
-            <element signature="e#2273#2274#0" expanded="true" />
-            <element signature="e#18322#18323#0" expanded="true" />
-            <element signature="e#18361#18362#0" expanded="true" />
-            <element signature="e#18988#18989#0" expanded="true" />
-            <element signature="e#19035#19036#0" expanded="true" />
-            <element signature="e#23548#23549#0" expanded="true" />
-            <element signature="e#23585#23586#0" expanded="true" />
-            <element signature="e#23633#23634#0" expanded="true" />
-            <element signature="e#23671#23672#0" expanded="true" />
+            <element signature="e#2282#2283#0" expanded="true" />
+            <element signature="e#2330#2331#0" expanded="true" />
+            <element signature="e#2508#2509#0" expanded="true" />
+            <element signature="e#2554#2555#0" expanded="true" />
+            <element signature="e#19525#19526#0" expanded="true" />
+            <element signature="e#19564#19565#0" expanded="true" />
+            <element signature="e#20191#20192#0" expanded="true" />
+            <element signature="e#20238#20239#0" expanded="true" />
+            <element signature="e#24598#24599#0" expanded="true" />
+            <element signature="e#24635#24636#0" expanded="true" />
+            <element signature="e#24683#24684#0" expanded="true" />
+            <element signature="e#24721#24722#0" expanded="true" />
           </folding>
         </state>
       </provider>
