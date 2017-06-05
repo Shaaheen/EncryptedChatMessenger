@@ -1,3 +1,4 @@
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.KeyGenerator;
@@ -85,7 +86,7 @@ public class TrustedCryptoServer extends PeerClient{
     }
 
     //Returns a trusted server thread - Communication thread for client
-    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException {
+    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException {
         System.out.println("OVERIDED METHOD " + keyPhraseForSharedKey);
         return new CertifiedClientThread( clientSocket, serverName, this );
     }
@@ -112,7 +113,7 @@ public class TrustedCryptoServer extends PeerClient{
 class CertifiedClientThread extends ClientThread{
     private TrustedCryptoServer trustedCryptoServer;
 
-    CertifiedClientThread(Socket clientSocket, String serverName, TrustedCryptoServer trustedCryptoServer) throws NoSuchProviderException, NoSuchAlgorithmException, IOException {
+    CertifiedClientThread(Socket clientSocket, String serverName, TrustedCryptoServer trustedCryptoServer) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException {
         super(clientSocket, serverName);
         this.trustedCryptoServer = trustedCryptoServer;
         setKeywordsInMessages(); //Set new shared key request keyword
@@ -145,9 +146,11 @@ class CertifiedClientThread extends ClientThread{
                 os.writeInt(keyBytes.length);
                 os.write( keyBytes );
                 os.flush();
-//
+                closeConnection();
+
                 CertifiedClient requestedClientInfo = trustedCryptoServer.getCertifiedClient( requestedClient );
                 trustedCryptoServer.sendSharedKeyToClient( requestedClientInfo , keyBytes );
+                trustedCryptoServer.closeConnection();
             }
             else{
                 System.out.println("One or more clients are not trusted by Server");

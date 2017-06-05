@@ -94,13 +94,13 @@ public class UnitTestApplication {
         Assert.assertEquals(clientA.getConnectedWithPort(), trustedCryptoServer.getPort());
 
         //KEY REQUEST
-        clientA.requestSharedKeyWith( clientB.getClientName() );
+        clientA.sendSharedKeyRequestMessage(clientB.getClientName());
 
         clientA.closeConnection();
         Assert.assertEquals( trustedCryptoServer.generateNewSharedKey().length, 32);
 
         //clientA.closeConnection();
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         Assert.assertEquals( clientA.getSharedKeyLength() , 32 );
 
         // 32 bytes = 256 bits, checking that sharedkeys are the correct size
@@ -124,18 +124,40 @@ public class UnitTestApplication {
         Thread.sleep(1000);
 
         //KEY REQUEST
-        clientA.requestSharedKeyWith( clientB.getClientName() );
+        clientA.sendSharedKeyRequestMessage(clientB.getClientName());
 
         clientA.closeConnection();
 
         //clientA.closeConnection();
-        Thread.sleep(5000);
+        Thread.sleep(3000);
 
         String test = "Test message one";
 
-        Assert.assertEquals( test.substring(0,test.length() - 2) ,  (new String ( clientA.decryptWithAesKey( clientA.encryptWithAesKey( test.getBytes("UTF-8") ) ), "UTF-8" )).substring(0, test.length() - 2) );
+        Assert.assertEquals( test.substring(0,test.length() - 2) ,  (new String ( SecureClient.decryptWithAesKey( SecureClient.encryptWithAesKey( test.getBytes("UTF-8") , clientA.sharedKey) , clientA.sharedKey ), "UTF-8" )).substring(0, test.length() - 2) );
         //clientA.closeConnection();
+        Thread.sleep(2000);
+
+        tearDown();
+    }
+
+    //Used when client requests shared key from server
+    @Test
+    public void testEncryptedMessagingConnection() throws Exception{
+        trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort(), clientA.getHostName() );
+        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );
+
+        //KEY REQUEST
+        SecureConnection clientAtoBConnection = clientA.requestEncryptedConnectionWith(clientB, trustedCryptoServer);
+        SecureClient secureClientA = clientAtoBConnection.getStartingClient();
+        SecureClient secureClientB = clientAtoBConnection.getReceivingClient();
+
+        Thread.sleep(1000);
+        secureClientA.sendMessage("HI HI");
+        secureClientA.sendEncryptedMessage( "encrypto bismo" );
+        secureClientB.sendEncryptedMessage("pls work");
+
         Thread.sleep(3000);
+        secureClientA.closeConnection();
 
         tearDown();
     }

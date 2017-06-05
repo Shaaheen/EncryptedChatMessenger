@@ -1,3 +1,5 @@
+import org.bouncycastle.crypto.InvalidCipherTextException;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,7 +17,7 @@ import java.util.List;
  */
 public class PeerClient extends Thread{
     protected String name;
-    private Server serverForPeering;
+    protected Server serverForPeering;
     private int port;
     protected boolean connectionEstablished;
     protected String connectedWithName;
@@ -52,7 +54,7 @@ public class PeerClient extends Thread{
         this.portNumToConnectTo = portNumToConnectTo;
     }
 
-    protected void connectToPeer() throws IOException {
+    protected void connectToPeer() throws IOException, InvalidCipherTextException {
 
         Socket communicationSocket = new Socket(hostName, portNumToConnectTo);
 
@@ -75,7 +77,7 @@ public class PeerClient extends Thread{
     }
 
     //Method to process messages appropriately
-    protected void processMessage(String message) throws IOException {
+    protected void processMessage(String message) throws IOException, InvalidCipherTextException {
         if (message.contains(":")){
             if (message.split(":")[0].equals("name")){
                 connectedWithName = message.split(":")[1];
@@ -84,6 +86,10 @@ public class PeerClient extends Thread{
                 message = "name:" + name;
                 sendMessage(message);
             }
+        }
+        else if (message.equals("end_connection")){
+            sendMessage("end_connection");
+            System.out.println("Me> " + message);
         }
         else{
             System.out.println(name + "> " + message);
@@ -94,6 +100,8 @@ public class PeerClient extends Thread{
         try {
             connectToPeer();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidCipherTextException e) {
             e.printStackTrace();
         }
     }
@@ -127,7 +135,7 @@ public class PeerClient extends Thread{
         return hostName;
     }
 
-    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException {
+    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException {
         return new ClientThread(clientSocket,serverName,true );
     }
 }
@@ -154,6 +162,23 @@ class Server extends Thread {
         this.peerClient = peerClient;
     }
 
+    protected ClientThread getClientThread(String name){
+        for (ClientThread clientThread: clients){
+            if (clientThread.username.contains(name)){
+                return clientThread;
+            }
+        }
+        return null;
+    }
+
+    protected ClientThread getFirstClientThread(){
+        if ( clients.size() >0 ){
+            return clients.get(0);
+        }
+        else {
+            return null;
+        }
+    }
     public void run() {
         notStopped = true;
         //create server socket and wait for connections
@@ -172,6 +197,8 @@ class Server extends Thread {
                 } catch (NoSuchProviderException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (InvalidCipherTextException e) {
                     e.printStackTrace();
                 }
                 clients.add(t);
@@ -202,7 +229,9 @@ class Server extends Thread {
 
     public void stopServer() throws IOException {
         notStopped = false;
-        serverSocket.close();
+        if (serverSocket != null){
+            serverSocket.close();
+        }
     }
 
 }
@@ -218,19 +247,19 @@ class ClientThread extends Thread {
 
     protected List keywordsInMessages;
 
-    ClientThread(Socket clientSocket, String serverName, boolean run) throws NoSuchProviderException, NoSuchAlgorithmException {
+    ClientThread(Socket clientSocket, String serverName, boolean run) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException {
         this.clientSocket = clientSocket;
-        username = serverName + "<-|";
+        username = "|-> " + serverName ;
         setKeywordsInMessages();
         if (run) communicateWithClient(clientSocket, serverName);
     }
 
     ClientThread(Socket clientSocket, String serverName){
         this.clientSocket = clientSocket;
-        username = serverName + "<-|";
+        username = "|-> " + serverName ;
     }
 
-    protected void communicateWithClient(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException {
+    protected void communicateWithClient(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException {
         try{
             os = new ObjectOutputStream(clientSocket.getOutputStream());
             os.flush();
@@ -262,19 +291,24 @@ class ClientThread extends Thread {
         os.flush();
     }
 
-    protected void reactToKeyword(String keyword) throws IOException, NoSuchProviderException, NoSuchAlgorithmException {
+    protected void closeConnection() throws IOException {
+        os.writeObject("end_connection");
+        os.flush();
+    }
+
+    protected void reactToKeyword(String keyword) throws IOException, NoSuchProviderException, NoSuchAlgorithmException, InvalidCipherTextException {
         if (keyword.equals("end_connection")){
             sendMessage("end_connection");
-            System.out.println("Me> " + keyword);
+            System.out.println( username + "> " + keyword);
         }
         else if (keyword.contains(":")){
             if (keyword.split(":")[0].equals("name")){
-                username = username + keyword.split(":")[1];
+                username = keyword.split(":")[1] + username  ;
                 System.out.println(username+"> My name is " +  keyword.split(":")[1]);
             }
         }
         else{
-            System.out.println("Me> " + keyword);
+            System.out.println( username + "> " + keyword);
         }
     }
 }
