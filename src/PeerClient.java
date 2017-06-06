@@ -6,6 +6,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -196,8 +197,8 @@ class Server extends Thread {
         try {
             try{
                 serverSocket = new ServerSocket(port);
-            }catch (SocketException e){
-                e.printStackTrace();
+            }  catch (SocketException e){
+                //e.printStackTrace();
                 //Goes to next port until finds new available port
                 port++;
                 serverSocket = new ServerSocket(port);

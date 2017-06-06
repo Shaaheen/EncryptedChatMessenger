@@ -80,6 +80,7 @@ public class SecureClient extends PeerClient{
             e.printStackTrace();
         }
         clientToConnectTo.stopServer();
+        stopServer();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -139,7 +140,7 @@ public class SecureClient extends PeerClient{
             out.writeInt(signature.length);
             out.write(signature);
             out.flush();
-            System.out.println(getClientName() + " sent the file with signature : " + byteArrayToHex( signature ));
+            System.out.println(getClientName() + " sent the message/file with signature : " + byteArrayToHex( signature ));
 
         }
         else{
@@ -159,7 +160,7 @@ public class SecureClient extends PeerClient{
                 currentSecureClientThread.os.writeInt(signature.length);
                 currentSecureClientThread.os.write(signature);
                 currentSecureClientThread.os.flush();
-                System.out.println(getClientName() + " sent the file with signature : " + byteArrayToHex( signature ));
+                System.out.println(getClientName() + " sent the message/file with signature : " + byteArrayToHex( signature ));
             }
 
         }

@@ -1,0 +1,370 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UnitTestApplication</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">&lt;empty package name&gt;</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UnitTestApplication (&lt;empty package name&gt;)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UnitTestApplication</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (153/ 153)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;import org.junit.After;
+<i>2</i>&nbsp;import org.junit.Before;
+<i>3</i>&nbsp;import org.junit.Test;
+<i>4</i>&nbsp;import org.junit.Assert;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.nio.file.Files;
+<i>7</i>&nbsp;import java.nio.file.Path;
+<i>8</i>&nbsp;import java.nio.file.Paths;
+<i>9</i>&nbsp;import java.security.Key;
+<i>10</i>&nbsp;
+<b class="fc"><i>11</i>&nbsp;public class UnitTestApplication {</b>
+<i>12</i>&nbsp;    SecureClient clientA;
+<i>13</i>&nbsp;    SecureClient clientB;
+<i>14</i>&nbsp;    TrustedCryptoServer trustedCryptoServer;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    @Before
+<i>17</i>&nbsp;    public void setUp() throws Exception {
+<b class="fc"><i>18</i>&nbsp;        System.out.println(&quot;Setting up clients and server&quot; + &quot;\r\n&quot;);</b>
+<b class="fc"><i>19</i>&nbsp;        clientA = new SecureClient( &quot;Client_A&quot;, 4421 );</b>
+<b class="fc"><i>20</i>&nbsp;        clientB = new SecureClient(&quot;Client_B&quot;, 5421);</b>
+<b class="fc"><i>21</i>&nbsp;        trustedCryptoServer = new TrustedCryptoServer(&quot;Trusted3rdParty&quot;, 5221);</b>
+<b class="fc"><i>22</i>&nbsp;    }</b>
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    //Used for client messaging
+<i>25</i>&nbsp;    @Test
+<i>26</i>&nbsp;    public void testClientToClientConnection() throws Exception{
+<b class="fc"><i>27</i>&nbsp;        clientA.prepareConnectionTo( &quot;localhost&quot; , clientB.getPort() );</b>
+<b class="fc"><i>28</i>&nbsp;        clientA.start();</b>
+<b class="fc"><i>29</i>&nbsp;        Thread.sleep(1000);</b>
+<i>30</i>&nbsp;        //clientA.connectTo(&quot;localhost&quot;,clientB.getPort());
+<b class="fc"><i>31</i>&nbsp;        Assert.assertEquals(clientA.connectionEstablished, true);</b>
+<b class="fc"><i>32</i>&nbsp;        Assert.assertEquals(clientA.getConnectedWithName(), clientB.getClientName());</b>
+<b class="fc"><i>33</i>&nbsp;        Assert.assertEquals(clientA.getConnectedWithPort(), clientB.getPort());</b>
+<b class="fc"><i>34</i>&nbsp;        clientA.closeConnection();</b>
+<i>35</i>&nbsp;
+<b class="fc"><i>36</i>&nbsp;        tearDown();</b>
+<b class="fc"><i>37</i>&nbsp;    }</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    //Used when client requests shared key from server
+<i>40</i>&nbsp;    @Test
+<i>41</i>&nbsp;    public void testClientToTrustedServerConnection() throws Exception{
+<b class="fc"><i>42</i>&nbsp;        clientA.prepareConnectionTo( &quot;localhost&quot; , trustedCryptoServer.getPort() );</b>
+<b class="fc"><i>43</i>&nbsp;        clientA.start();</b>
+<b class="fc"><i>44</i>&nbsp;        Thread.sleep(1000);</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;        //clientA.connectTo(&quot;localhost&quot;,trustedCryptoServer.getPort());
+<i>47</i>&nbsp;
+<b class="fc"><i>48</i>&nbsp;        Assert.assertEquals(clientA.connectionEstablished, true);</b>
+<b class="fc"><i>49</i>&nbsp;        Assert.assertEquals(clientA.getConnectedWithName(), trustedCryptoServer.getClientName());</b>
+<b class="fc"><i>50</i>&nbsp;        Assert.assertEquals(clientA.getConnectedWithPort(), trustedCryptoServer.getPort());</b>
+<b class="fc"><i>51</i>&nbsp;        clientA.closeConnection();</b>
+<b class="fc"><i>52</i>&nbsp;        tearDown();</b>
+<b class="fc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    //Used when server needs to share key with other client
+<i>56</i>&nbsp;    @Test
+<i>57</i>&nbsp;    public void testTrustedServerToClientConnection() throws Exception{
+<b class="fc"><i>58</i>&nbsp;        trustedCryptoServer.prepareConnectionTo( &quot;localhost&quot; , clientB.getPort() );</b>
+<b class="fc"><i>59</i>&nbsp;        trustedCryptoServer.start();</b>
+<b class="fc"><i>60</i>&nbsp;        Thread.sleep(1000);</b>
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;        //trustedCryptoServer.connectTo(&quot;localhost&quot;,clientB.getPort());
+<i>63</i>&nbsp;
+<b class="fc"><i>64</i>&nbsp;        Assert.assertEquals(trustedCryptoServer.connectionEstablished, true);</b>
+<b class="fc"><i>65</i>&nbsp;        Assert.assertEquals(trustedCryptoServer.getConnectedWithName(), clientB.getClientName());</b>
+<b class="fc"><i>66</i>&nbsp;        Assert.assertEquals(trustedCryptoServer.getConnectedWithPort(), clientB.getPort());</b>
+<b class="fc"><i>67</i>&nbsp;        trustedCryptoServer.closeConnection();</b>
+<b class="fc"><i>68</i>&nbsp;        tearDown();</b>
+<b class="fc"><i>69</i>&nbsp;    }</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    @Test
+<i>72</i>&nbsp;    public void testTrustedCryptoServer() throws Exception{
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;        //testing certified client search function
+<b class="fc"><i>75</i>&nbsp;        trustedCryptoServer.certifyNewClient(&quot;ClientG&quot;, 856, &quot;localhost&quot;);</b>
+<b class="fc"><i>76</i>&nbsp;        Assert.assertNotNull( trustedCryptoServer.getCertifiedClient(&quot;ClientG&quot;) );</b>
+<i>77</i>&nbsp;
+<b class="fc"><i>78</i>&nbsp;        Assert.assertNull(trustedCryptoServer.getCertifiedClient(&quot;ClientA&quot;));</b>
+<i>79</i>&nbsp;
+<b class="fc"><i>80</i>&nbsp;        trustedCryptoServer.certifyNewClient( &quot;ClientK&quot;, 555 , &quot;localhost&quot; );</b>
+<b class="fc"><i>81</i>&nbsp;        Assert.assertEquals( trustedCryptoServer.verifyThatClientsAreTrusted( &quot;ClientK&quot;, &quot;ClientG&quot; ), true );</b>
+<i>82</i>&nbsp;
+<b class="fc"><i>83</i>&nbsp;        Assert.assertEquals( trustedCryptoServer.verifyThatClientsAreTrusted( &quot;ClientA&quot;, &quot;ClientG&quot; ), false );</b>
+<i>84</i>&nbsp;
+<b class="fc"><i>85</i>&nbsp;        tearDown();</b>
+<b class="fc"><i>86</i>&nbsp;    }</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    //Used when client requests shared key from server
+<i>89</i>&nbsp;    @Test
+<i>90</i>&nbsp;    public void testSharedKeyRequestAndGenerationConnection() throws Exception{
+<b class="fc"><i>91</i>&nbsp;        trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort(), clientA.getHostName() );</b>
+<b class="fc"><i>92</i>&nbsp;        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );</b>
+<b class="fc"><i>93</i>&nbsp;        clientA.prepareConnectionTo( &quot;localhost&quot; , trustedCryptoServer.getPort() );</b>
+<b class="fc"><i>94</i>&nbsp;        clientA.start();</b>
+<b class="fc"><i>95</i>&nbsp;        Thread.sleep(1000);</b>
+<i>96</i>&nbsp;
+<b class="fc"><i>97</i>&nbsp;        Assert.assertEquals(clientA.connectionEstablished, true);</b>
+<b class="fc"><i>98</i>&nbsp;        Assert.assertEquals(clientA.getConnectedWithName(), trustedCryptoServer.getClientName());</b>
+<b class="fc"><i>99</i>&nbsp;        Assert.assertEquals(clientA.getConnectedWithPort(), trustedCryptoServer.getPort());</b>
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;        //KEY REQUEST
+<b class="fc"><i>102</i>&nbsp;        clientA.sendSharedKeyRequestMessage(clientB.getClientName());</b>
+<i>103</i>&nbsp;
+<b class="fc"><i>104</i>&nbsp;        clientA.closeConnection();</b>
+<b class="fc"><i>105</i>&nbsp;        Assert.assertEquals( trustedCryptoServer.generateNewSharedKey().length, 32);</b>
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;        //clientA.closeConnection();
+<b class="fc"><i>108</i>&nbsp;        Thread.sleep(2000);</b>
+<b class="fc"><i>109</i>&nbsp;        Assert.assertEquals( clientA.getSharedKeyLength() , 32 );</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;        // 32 bytes = 256 bits, checking that sharedkeys are the correct size
+<b class="fc"><i>112</i>&nbsp;        Assert.assertEquals( trustedCryptoServer.connectionEstablished , true );</b>
+<b class="fc"><i>113</i>&nbsp;        Assert.assertEquals( trustedCryptoServer.connectedWithName , clientB.getClientName() );</b>
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;        //clientA.closeConnection();
+<b class="fc"><i>116</i>&nbsp;        Thread.sleep(3000);</b>
+<b class="fc"><i>117</i>&nbsp;        Assert.assertEquals( clientB.getSharedKeyLength() , 32 );</b>
+<i>118</i>&nbsp;
+<b class="fc"><i>119</i>&nbsp;        tearDown();</b>
+<b class="fc"><i>120</i>&nbsp;    }</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    /**
+<i>123</i>&nbsp;     * Tests AES encryption and decryption on the peer connection
+<i>124</i>&nbsp;     * @throws Exception
+<i>125</i>&nbsp;     */
+<i>126</i>&nbsp;    @Test
+<i>127</i>&nbsp;    public void testEncryptionAndDecryptionConnection() throws Exception{
+<b class="fc"><i>128</i>&nbsp;        trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort(), clientA.getHostName() );</b>
+<b class="fc"><i>129</i>&nbsp;        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );</b>
+<b class="fc"><i>130</i>&nbsp;        clientA.prepareConnectionTo( &quot;localhost&quot; , trustedCryptoServer.getPort() );</b>
+<b class="fc"><i>131</i>&nbsp;        clientA.start();</b>
+<b class="fc"><i>132</i>&nbsp;        Thread.sleep(1000);</b>
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;        //KEY REQUEST
+<b class="fc"><i>135</i>&nbsp;        clientA.sendSharedKeyRequestMessage(clientB.getClientName());</b>
+<i>136</i>&nbsp;
+<b class="fc"><i>137</i>&nbsp;        clientA.closeConnection();</b>
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;        //clientA.closeConnection();
+<b class="fc"><i>140</i>&nbsp;        Thread.sleep(3000);</b>
+<i>141</i>&nbsp;
+<b class="fc"><i>142</i>&nbsp;        String test = &quot;Test message one&quot;;</b>
+<i>143</i>&nbsp;
+<b class="fc"><i>144</i>&nbsp;        Assert.assertEquals( test.substring(0,test.length() - 2) ,  (new String ( SecureClient.decryptWithAesKey( SecureClient.encryptWithAesKey( test.getBytes(&quot;UTF-8&quot;) , clientA.sharedKey) , clientA.sharedKey ), &quot;UTF-8&quot; )).substring(0, test.length() - 2) );</b>
+<i>145</i>&nbsp;        //clientA.closeConnection();
+<b class="fc"><i>146</i>&nbsp;        Thread.sleep(2000);</b>
+<i>147</i>&nbsp;
+<b class="fc"><i>148</i>&nbsp;        tearDown();</b>
+<b class="fc"><i>149</i>&nbsp;    }</b>
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    /**
+<i>152</i>&nbsp;     * Tests establishing the secure connection between clients
+<i>153</i>&nbsp;     * @throws Exception
+<i>154</i>&nbsp;     */
+<i>155</i>&nbsp;    @Test
+<i>156</i>&nbsp;    public void testEncryptedMessagingConnection() throws Exception{
+<b class="fc"><i>157</i>&nbsp;        trustedCryptoServer.certifyNewClient(clientA.getClientName(), clientA.getPort(), clientA.getHostName());</b>
+<b class="fc"><i>158</i>&nbsp;        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );</b>
+<i>159</i>&nbsp;
+<i>160</i>&nbsp;        //KEY REQUEST
+<b class="fc"><i>161</i>&nbsp;        SecureConnection clientAtoBConnection = clientA.requestEncryptedConnectionWith(clientB, trustedCryptoServer);</b>
+<b class="fc"><i>162</i>&nbsp;        SecureClient secureClientA = clientAtoBConnection.getStartingClient();</b>
+<b class="fc"><i>163</i>&nbsp;        SecureClient secureClientB = clientAtoBConnection.getReceivingClient();</b>
+<i>164</i>&nbsp;
+<b class="fc"><i>165</i>&nbsp;        Thread.sleep(1000);</b>
+<b class="fc"><i>166</i>&nbsp;        secureClientA.sendMessage(&quot;HI HI&quot;);</b>
+<b class="fc"><i>167</i>&nbsp;        secureClientA.sendEncryptedMessage( &quot;encrypto bismo&quot; );</b>
+<b class="fc"><i>168</i>&nbsp;        secureClientB.sendEncryptedMessage(&quot;pls work&quot;);</b>
+<i>169</i>&nbsp;
+<b class="fc"><i>170</i>&nbsp;        Thread.sleep(3000);</b>
+<b class="fc"><i>171</i>&nbsp;        secureClientA.closeConnection();</b>
+<b class="fc"><i>172</i>&nbsp;        secureClientB.stopServer();</b>
+<i>173</i>&nbsp;
+<b class="fc"><i>174</i>&nbsp;        tearDown();</b>
+<b class="fc"><i>175</i>&nbsp;    }</b>
+<i>176</i>&nbsp;
+<i>177</i>&nbsp;    /**
+<i>178</i>&nbsp;     * Tests transferring files accross connection
+<i>179</i>&nbsp;      * @throws Exception
+<i>180</i>&nbsp;     */
+<i>181</i>&nbsp;    @Test
+<i>182</i>&nbsp;    public void testEncryptedFileTransferConnection() throws Exception{
+<b class="fc"><i>183</i>&nbsp;        trustedCryptoServer.certifyNewClient( clientA.getClientName(), clientA.getPort(), clientA.getHostName() );</b>
+<b class="fc"><i>184</i>&nbsp;        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );</b>
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;        //KEY REQUEST
+<b class="fc"><i>187</i>&nbsp;        SecureConnection clientAtoBConnection = clientA.requestEncryptedConnectionWith(clientB, trustedCryptoServer);</b>
+<b class="fc"><i>188</i>&nbsp;        SecureClient secureClientA = clientAtoBConnection.getStartingClient();</b>
+<b class="fc"><i>189</i>&nbsp;        SecureClient secureClientB = clientAtoBConnection.getReceivingClient();</b>
+<i>190</i>&nbsp;        //trustedCryptoServer.closeConnection();
+<i>191</i>&nbsp;
+<b class="fc"><i>192</i>&nbsp;        Thread.sleep(1000);</b>
+<b class="fc"><i>193</i>&nbsp;        String fileName = &quot;testfile.txt&quot;;</b>
+<b class="fc"><i>194</i>&nbsp;        secureClientA.sendEncryptedFile( fileName, fileName );</b>
+<i>195</i>&nbsp;
+<b class="fc"><i>196</i>&nbsp;        String fileName3 = &quot;techback.jpg&quot;;</b>
+<b class="fc"><i>197</i>&nbsp;        secureClientB.sendEncryptedFile( fileName3, fileName3 );</b>
+<i>198</i>&nbsp;
+<b class="fc"><i>199</i>&nbsp;        Path fileLocation = Paths.get(fileName);</b>
+<b class="fc"><i>200</i>&nbsp;        byte[] data = Files.readAllBytes(fileLocation);</b>
+<b class="fc"><i>201</i>&nbsp;        String fileString1 = new String(data);</b>
+<i>202</i>&nbsp;
+<b class="fc"><i>203</i>&nbsp;        Path fileLocation2 = Paths.get(secureClientB.getClientName() + fileName);</b>
+<b class="fc"><i>204</i>&nbsp;        byte[] data2 = Files.readAllBytes(fileLocation2);</b>
+<b class="fc"><i>205</i>&nbsp;        String fileString2 = new String(data2);</b>
+<i>206</i>&nbsp;
+<b class="fc"><i>207</i>&nbsp;        Assert.assertEquals(fileString2.substring(0, fileString2.length() - 4), fileString1);</b>
+<i>208</i>&nbsp;
+<b class="fc"><i>209</i>&nbsp;        Thread.sleep(3000);</b>
+<b class="fc"><i>210</i>&nbsp;        secureClientA.closeConnection();</b>
+<b class="fc"><i>211</i>&nbsp;        secureClientB.stopServer();</b>
+<b class="fc"><i>212</i>&nbsp;        tearDown();</b>
+<b class="fc"><i>213</i>&nbsp;    }</b>
+<i>214</i>&nbsp;
+<i>215</i>&nbsp;    /**
+<i>216</i>&nbsp;     * Tests RSA encryption
+<i>217</i>&nbsp;     * @throws Exception
+<i>218</i>&nbsp;     */
+<i>219</i>&nbsp;    @Test
+<i>220</i>&nbsp;    public void testRSAEncryption() throws Exception {
+<b class="fc"><i>221</i>&nbsp;        Key[] keys = SecureClient.getPublicPrivateKeyPair(1024);</b>
+<b class="fc"><i>222</i>&nbsp;        String testString = &quot;Testing stringy thingy wingy&quot;;</b>
+<b class="fc"><i>223</i>&nbsp;        System.out.println(&quot;Orignal : &quot; + testString);</b>
+<b class="fc"><i>224</i>&nbsp;        String decryptedString = new String(SecureClient.decryptWithRSAKey( SecureClient.encryptWithRSAKey( testString.getBytes(), keys[1] ) , keys[0]) );</b>
+<b class="fc"><i>225</i>&nbsp;        System.out.println(&quot;Private key : &quot; + SecureClient.byteArrayToHex( keys[1].getEncoded() ));</b>
+<b class="fc"><i>226</i>&nbsp;        System.out.println(&quot;Public key : &quot; + SecureClient.byteArrayToHex( keys[0].getEncoded() ));</b>
+<b class="fc"><i>227</i>&nbsp;        System.out.println(&quot;Encrypted : &quot; + SecureClient.byteArrayToHex( SecureClient.encryptWithRSAKey( testString.getBytes(), keys[1] ) ));</b>
+<b class="fc"><i>228</i>&nbsp;        System.out.println(&quot;Decrypted : &quot; + decryptedString);</b>
+<b class="fc"><i>229</i>&nbsp;        Assert.assertEquals( decryptedString , testString ) ;</b>
+<i>230</i>&nbsp;
+<i>231</i>&nbsp;        //Test hash RSA encryption
+<b class="fc"><i>232</i>&nbsp;        System.out.println(&quot;Orig has: &quot; + SecureClient.byteArrayToHex(SecureClient.hashByteArray(testString.getBytes())) );</b>
+<b class="fc"><i>233</i>&nbsp;        System.out.println(&quot;Decrypted hash: &quot; + SecureClient.byteArrayToHex(SecureClient.decryptWithRSAKey(SecureClient.encryptWithRSAKey(SecureClient.hashByteArray(testString.getBytes()),keys[1]),keys[0])));</b>
+<b class="fc"><i>234</i>&nbsp;        Assert.assertArrayEquals(SecureClient.hashByteArray(testString.getBytes()), SecureClient.decryptWithRSAKey(SecureClient.encryptWithRSAKey(SecureClient.hashByteArray(testString.getBytes()),keys[1]),keys[0]));</b>
+<b class="fc"><i>235</i>&nbsp;    }</b>
+<i>236</i>&nbsp;
+<i>237</i>&nbsp;    /**
+<i>238</i>&nbsp;     * Tests authentication messaging
+<i>239</i>&nbsp;     * @throws Exception
+<i>240</i>&nbsp;     */
+<i>241</i>&nbsp;    @Test
+<i>242</i>&nbsp;    public void testAuthenticatedEncryptedMessaging() throws Exception{
+<b class="fc"><i>243</i>&nbsp;        trustedCryptoServer.certifyNewClient(clientA.getClientName(), clientA.getPort(), clientA.getHostName());</b>
+<b class="fc"><i>244</i>&nbsp;        trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );</b>
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;        //KEY REQUEST
+<b class="fc"><i>247</i>&nbsp;        SecureConnection clientAtoBConnection = clientA.requestEncryptedConnectionWith(clientB, trustedCryptoServer);</b>
+<b class="fc"><i>248</i>&nbsp;        SecureClient secureClientA = clientAtoBConnection.getStartingClient();</b>
+<b class="fc"><i>249</i>&nbsp;        SecureClient secureClientB = clientAtoBConnection.getReceivingClient();</b>
+<i>250</i>&nbsp;
+<b class="fc"><i>251</i>&nbsp;        Thread.sleep(1000);</b>
+<b class="fc"><i>252</i>&nbsp;        String fileName3 = &quot;testfile.txt&quot;;</b>
+<i>253</i>&nbsp;        //Test messages
+<b class="fc"><i>254</i>&nbsp;        secureClientA.sendEncryptedMessage( &quot;encrypto bismo&quot; );</b>
+<b class="fc"><i>255</i>&nbsp;        secureClientB.sendEncryptedMessage( &quot;Testing msg&quot;);</b>
+<b class="fc"><i>256</i>&nbsp;        secureClientB.sendEncryptedFile(fileName3,fileName3);</b>
+<i>257</i>&nbsp;
+<b class="fc"><i>258</i>&nbsp;        Path fileLocation = Paths.get(fileName3);</b>
+<b class="fc"><i>259</i>&nbsp;        byte[] data = Files.readAllBytes(fileLocation);</b>
+<b class="fc"><i>260</i>&nbsp;        String fileString1 = new String(data);</b>
+<i>261</i>&nbsp;
+<b class="fc"><i>262</i>&nbsp;        Path fileLocation2 = Paths.get(secureClientA.getClientName() + fileName3);</b>
+<b class="fc"><i>263</i>&nbsp;        byte[] data2 = Files.readAllBytes(fileLocation2);</b>
+<b class="fc"><i>264</i>&nbsp;        String fileString2 = new String(data2);</b>
+<i>265</i>&nbsp;
+<b class="fc"><i>266</i>&nbsp;        Assert.assertEquals( fileString2.substring(0,fileString2.length() -4), fileString1 );</b>
+<i>267</i>&nbsp;
+<b class="fc"><i>268</i>&nbsp;        Thread.sleep(3000);</b>
+<b class="fc"><i>269</i>&nbsp;        secureClientA.closeConnection();</b>
+<b class="fc"><i>270</i>&nbsp;        secureClientB.stopServer();</b>
+<i>271</i>&nbsp;
+<b class="fc"><i>272</i>&nbsp;        tearDown();</b>
+<b class="fc"><i>273</i>&nbsp;    }</b>
+<i>274</i>&nbsp;
+<i>275</i>&nbsp;
+<i>276</i>&nbsp;    @After
+<i>277</i>&nbsp;    public void tearDown() throws Exception {
+<b class="fc"><i>278</i>&nbsp;        System.out.println(&quot;Closing sockets&quot;);</b>
+<b class="fc"><i>279</i>&nbsp;        Thread.sleep(1000);</b>
+<b class="fc"><i>280</i>&nbsp;        clientA.stopServer();</b>
+<b class="fc"><i>281</i>&nbsp;        clientB.stopServer();</b>
+<b class="fc"><i>282</i>&nbsp;        trustedCryptoServer.stopServer();</b>
+<b class="fc"><i>283</i>&nbsp;        trustedCryptoServer.clearCertifiedClients();</b>
+<b class="fc"><i>284</i>&nbsp;        Thread.sleep(2000);</b>
+<b class="fc"><i>285</i>&nbsp;        System.out.println();</b>
+<b class="fc"><i>286</i>&nbsp;    }</b>
+<i>287</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-06-06 17:56</div>
+</div>
+</body>
+</html>
