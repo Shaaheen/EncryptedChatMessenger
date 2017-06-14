@@ -14,6 +14,7 @@ import java.security.NoSuchProviderException;
 public class ExampleApplication {
 
     public static void main(String[] args) throws NoSuchProviderException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, InterruptedException, InvalidCipherTextException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+
         SecureClient clientA = new SecureClient( "Client_C", 5712 );
         SecureClient clientB = new SecureClient("Client_D", 3400);
         TrustedCryptoServer trustedCryptoServer = new TrustedCryptoServer("Trusted3rdParty", 2400);
@@ -27,8 +28,9 @@ public class ExampleApplication {
 
         Thread.sleep(1000);
         String fileName3 = "testfile.txt";
+        //String fileName3 = "techback.jpg";
         //Test messages
-        secureClientA.sendEncryptedMessage( "Hi there" );
+        secureClientA.sendEncryptedMessage( "Hi there class!" );
         secureClientB.sendEncryptedMessage( "Hello friend");
         secureClientA.sendEncryptedMessage( "What are you doing?" );
         secureClientB.sendEncryptedMessage( "Nothing much man" );

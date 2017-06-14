@@ -34,6 +34,7 @@ public class SecureClient extends PeerClient{
     protected SecureClientThread currentSecureClientThread; //Server side communicator
     private Key[] publicPrivateKeyPair; //RSA key pair - public and private keys
     private SecureConnection secureConnectionWithPeer; //Connection object reperesenting secure peer connection
+    protected boolean receivingComm;
 
     SecureClient(String clientName, int port) {
         super(clientName, port);
@@ -41,6 +42,7 @@ public class SecureClient extends PeerClient{
         this.startedCommunication = false;
         this.currentSecureClientThread = null;
         this.secureConnectionWithPeer = null;
+        this.receivingComm = false;
     }
 
     SecureClient(String clientName, int port, byte[] sharedKey) {
@@ -49,6 +51,7 @@ public class SecureClient extends PeerClient{
         this.startedCommunication = false;
         this.currentSecureClientThread = null;
         this.secureConnectionWithPeer = null;
+        this.receivingComm = false;
     }
 
     protected void startedCommunication(){
@@ -61,6 +64,13 @@ public class SecureClient extends PeerClient{
 
     public Key getPublicKey(){
         return publicPrivateKeyPair[0];
+    }
+
+    protected void requestEncryptedConnectedWithName(String name, TrustedCryptoServer trustedCryptoServer) throws IOException {
+        System.out.println();
+        System.out.println("GENERATING MASTER KEY AND SHARING IT WITH NAME...");
+        //Get sharedkey
+        requestSharedKeyWith(name, trustedCryptoServer);
     }
 
     /**
@@ -345,6 +355,17 @@ public class SecureClient extends PeerClient{
         sendSharedKeyRequestMessage( peerClientName );
     }
 
+    protected void requestSharedKeyWith(String peerClientName, String hostNameServer, int port) throws IOException {
+        prepareConnectionTo(hostNameServer, port);
+        start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sendSharedKeyRequestMessage( peerClientName );
+    }
+
     //Method to process messages appropriately -
     protected void processMessage(String message) throws IOException, InvalidCipherTextException, BadPaddingException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, InvalidKeyException, ClassNotFoundException {
         if (message.contains(":")){
@@ -445,6 +466,9 @@ class SecureClientThread extends ClientThread{
                 username = keyword.split(":")[1] + username ;
                 System.out.println(username+"> my name is " +  keyword.split(":")[1]);
             }
+        }
+        else if (keyword.equals("initiate")){
+            secureClient.receivingComm = true;
         }
         else if (keyword.equals(TrustedCryptoServer.INCOMING_KEY_KEYWORD)){
             System.out.println(secureClient.getClientName() + " is receiving sharedkey...");
