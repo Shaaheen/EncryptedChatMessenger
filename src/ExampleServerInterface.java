@@ -4,8 +4,9 @@
 public class ExampleServerInterface {
     public static void main(String[] args) {
         TrustedCryptoServer trustedCryptoServer = new TrustedCryptoServer("Trusted3rdParty", 2400);
-        trustedCryptoServer.certifyNewClient("Client_C", 5310 , "localhost" );
-        trustedCryptoServer.certifyNewClient( "Client_D", 5410 , "localhost" );
+        trustedCryptoServer.clientPassword = "connect123";
+        trustedCryptoServer.certifyNewClient("Client_C", 5311 , "localhost" );
+        trustedCryptoServer.certifyNewClient( "Client_D", 5411 , "localhost" );
 
 
     }

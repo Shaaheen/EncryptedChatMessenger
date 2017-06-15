@@ -31,12 +31,14 @@ public class SecureClient extends PeerClient{
     public static String ENCRYPTED_MESSAGE_KEYPHRASE = "encrypted_message_incoming";
     public static String ENCRYPTED_FILE_KEYPHRASE = "encrypted_file_incoming-";
     public static String SIGN_AUTHENTICATION_KEYPHRASE = "signature_incoming";
-
+    public  String peerName;
     private boolean startedCommunication; //boolean to tell if client that started communication
     protected SecureClientThread currentSecureClientThread; //Server side communicator
     private Key[] publicPrivateKeyPair; //RSA key pair - public and private keys
     private SecureConnection secureConnectionWithPeer; //Connection object reperesenting secure peer connection
     protected boolean receivingComm;
+
+    public SecureClient object;
 
     SecureClient(String clientName, int port) {
         super(clientName, port);
@@ -45,6 +47,8 @@ public class SecureClient extends PeerClient{
         this.currentSecureClientThread = null;
         this.secureConnectionWithPeer = null;
         this.receivingComm = false;
+
+        object = this;
     }
 
     SecureClient(String clientName, int port, byte[] sharedKey) {
@@ -220,8 +224,8 @@ public class SecureClient extends PeerClient{
                 is.readFully(signature, 0, signature.length); // read the message
             }
             //Decrypt using peer clients public key
-            byte[] decryptedSign = SecureClient.decryptWithRSAKey( signature, getOtherClientPublicKey(secureClient.getClientName()) );
-            System.out.println("Decrypted sign : "+  SecureClient.byteArrayToHex(decryptedSign) + " with pubkey :" + SecureClient.byteArrayToHex(getOtherClientPublicKey(secureClient.getClientName()).getEncoded()) );
+            byte[] decryptedSign = SecureClient.decryptWithRSAKey( signature, getOtherClientPublicKey(secureClient) );
+            System.out.println("Decrypted sign : "+  SecureClient.byteArrayToHex(decryptedSign) + " with pubkey :" + SecureClient.byteArrayToHex(getOtherClientPublicKey(secureClient).getEncoded()) );
             if ( Arrays.equals(decryptedSign, SecureClient.hashByteArray(encryptedMessage)) ){
 //                System.out.println("SHARED KEY:");
 //                System.out.println( SecureClient.byteArrayToHex( secureClient.sharedKey ));
@@ -240,12 +244,12 @@ public class SecureClient extends PeerClient{
         }
     }
 
-    private static Key getOtherClientPublicKey(String clientName)
+    private static Key getOtherClientPublicKey(SecureClient secureClient)
             throws IOException, NoSuchAlgorithmException
     {
         Key pk = null;
-//        String keyFileName = "pubkey_"+clientName;
-        String keyFileName = "pubkey_Client_C";
+        String keyFileName = "pubkey_"+secureClient.peerName;
+//        String keyFileName = "pubkey_Client_C";
         File file = new File(keyFileName);
         FileInputStream in = new FileInputStream(file);
         DataInputStream dis = new DataInputStream(in);
@@ -387,9 +391,9 @@ public class SecureClient extends PeerClient{
     }
 
 
-    protected void sendSharedKeyRequestMessage(String peerClientName) throws IOException {
+    protected void sendSharedKeyRequestMessage(String peerClientName, String password) throws IOException {
         System.out.println("Requesting shared key from server...");
-        sendMessage("sharedkey_request:" + getClientName() + ":" + peerClientName);
+        sendMessage("sharedkey_request:" + getClientName() + ":" + peerClientName + ":" + password);
     }
 
     protected void requestSharedKeyWith(String peerClientName, TrustedCryptoServer trustedCryptoServer) throws IOException {
@@ -400,10 +404,10 @@ public class SecureClient extends PeerClient{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        sendSharedKeyRequestMessage( peerClientName );
+        sendSharedKeyRequestMessage( peerClientName,"");
     }
 
-    protected void requestSharedKeyWith(String peerClientName, String hostNameServer, int port) throws IOException {
+    protected void requestSharedKeyWith(String peerClientName, String hostNameServer, int port, String password) throws IOException {
         prepareConnectionTo(hostNameServer, port);
         start();
         try {
@@ -411,7 +415,8 @@ public class SecureClient extends PeerClient{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        sendSharedKeyRequestMessage( peerClientName );
+        peerName = peerClientName;
+        sendSharedKeyRequestMessage( peerClientName, password );
     }
 
     //Method to process messages appropriately -
@@ -516,10 +521,7 @@ class SecureClientThread extends ClientThread{
                 System.out.println(username+"> my name is " +  keyword.split(":")[1]);
             }
         }
-        if(keyword.equals("potato"))
-        {
-            System.out.println("Potato keyword");
-        }
+
         else if (keyword.equals("initiate")){
             secureClient.receivingComm = true;
         }
@@ -533,6 +535,7 @@ class SecureClientThread extends ClientThread{
             }
 
             System.out.println(secureClient.name + " received SharedKey: " + SecureClient.byteArrayToHex( secureClient.sharedKey ) );
+            storeSharedKey(secureClient.sharedKey);
         }
         else if (keyword.equals( SecureClient.ENCRYPTED_MESSAGE_KEYPHRASE )){
             System.out.println(secureClient.getClientName() + " is receiving an encrypted message...");
@@ -549,12 +552,11 @@ class SecureClientThread extends ClientThread{
             if (SecureClient.authenticateMessage(encryptedMessage, is, secureClient)){
                 System.out.println( secureClient.name + " received Encrypted msg= " + SecureClient.byteArrayToHex( encryptedMessage ) );
                 System.out.println("----------------");
-                System.out.println("Shared what what : " + SecureClient.byteArrayToHex(secureClient.sharedKey) );
+//                System.out.println("Shared what what : " + SecureClient.byteArrayToHex(getStoredSharedKey()) );
                 System.out.println( secureClient.name + "> Received decrypted msg= "
-                        + new String( SecureClient.decryptWithAesKey( encryptedMessage, secureClient.sharedKey ), "UTF-8" ) );
+                        + new String( SecureClient.decryptWithAesKey( encryptedMessage, getStoredSharedKey() ), "UTF-8" ) );
                 System.out.println("----------------");
             }
-
         }
         else if ( keyword.contains( SecureClient.ENCRYPTED_FILE_KEYPHRASE ) ){
             System.out.println( secureClient.getClientName() + " is going to receive encrypted file..." );
@@ -565,6 +567,62 @@ class SecureClientThread extends ClientThread{
         else{
             System.out.println(username + "> " + keyword);
         }
+    }
+
+    public void storeSharedKey(byte[] key)
+    {
+        FileOutputStream fos = null;
+        try
+        {
+            fos = new FileOutputStream("sharedkey_"+secureClient.getClientName());
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        try
+        {
+            fos.write(key);
+            fos.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    public byte[] getStoredSharedKey()
+    {
+        byte[] key = new byte[0];
+        RandomAccessFile f = null;
+        try
+        {
+            f = new RandomAccessFile("sharedkey_"+secureClient.getClientName(), "r");
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
+        try
+        {
+            key = new byte[(int)f.length()];
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        try
+        {
+            f.readFully(key);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return key;
     }
 }
 

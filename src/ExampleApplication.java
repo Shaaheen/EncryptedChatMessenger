@@ -18,6 +18,7 @@ public class ExampleApplication {
         SecureClient clientA = new SecureClient( "Client_C", 5712 );
         SecureClient clientB = new SecureClient("Client_D", 3400);
         TrustedCryptoServer trustedCryptoServer = new TrustedCryptoServer("Trusted3rdParty", 2400);
+        trustedCryptoServer.setClientPassword("connect123");
         trustedCryptoServer.certifyNewClient(clientA.getClientName(), clientA.getPort(), clientA.getHostName());
         trustedCryptoServer.certifyNewClient( clientB.getClientName(), clientB.getPort(), clientB.getHostName() );
 

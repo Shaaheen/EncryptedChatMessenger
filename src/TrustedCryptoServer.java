@@ -22,6 +22,8 @@ public class TrustedCryptoServer extends PeerClient{
     private ArrayList<CertifiedClient> certifiedClients;
     protected String keyPhraseForSharedKey;
 
+    public String clientPassword;
+
     public static String INCOMING_KEY_KEYWORD = "sharedkey_incoming";
 
     TrustedCryptoServer(String trustedServerName, int port)  {
@@ -67,9 +69,14 @@ public class TrustedCryptoServer extends PeerClient{
         return null;
     }
 
+    public void setClientPassword(String password)
+    {
+        clientPassword = password;
+    }
+
     //If no port number exists, then client is not trusted
-    protected boolean verifyThatClientsAreTrusted(String clientA, String clientB){
-        return  ( ( getCertifiedClient(clientA) != null ) && ( getCertifiedClient(clientB) != null) ) ;
+    protected boolean verifyThatClientsAreTrusted(String clientA, String clientB, String password){
+        return  ( ( getCertifiedClient(clientA) != null ) && ( getCertifiedClient(clientB) != null) && (password.equals(clientPassword)) ) ;
     }
 
     protected void sendByteArray(int length, byte[] byteArray) throws IOException {
@@ -131,9 +138,10 @@ class CertifiedClientThread extends ClientThread{
         else if ( keyword.contains( trustedCryptoServer.keyPhraseForSharedKey ) ) {
             String senderClient  = keyword.split(":")[1];
             String requestedClient  = keyword.split(":")[2];
+            String password = keyword.split(":")[3];
 
             //If both clients are trusted by the server, then gen and pass on shared key
-            if ( trustedCryptoServer.verifyThatClientsAreTrusted( senderClient , requestedClient ) ){
+            if ( trustedCryptoServer.verifyThatClientsAreTrusted( senderClient , requestedClient, password ) ){
                 byte[] keyBytes = trustedCryptoServer.generateNewSharedKey();
                 System.out.println("Generated new key : "  + SecureClient.byteArrayToHex(keyBytes) ); /*+ new String( keyBytes, Charset.forName("UTF-8"))*/
                 //System.out.println(Arrays.toString(new String( keyBytes,"UTF8").getBytes()));
@@ -149,6 +157,7 @@ class CertifiedClientThread extends ClientThread{
             }
             else{
                 System.out.println("One or more clients are not trusted by Server");
+                closeConnection();
             }
 
         }

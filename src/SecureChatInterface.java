@@ -3,7 +3,9 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,6 +25,7 @@ public class SecureChatInterface {
 
         int port = Integer.parseInt(args[1]);
         String name = String.valueOf(args[0]);
+        String password = "";
         SecureClient clientA = new SecureClient( args[0], Integer.parseInt(args[1] ));
         SecureClient clientACopy = new SecureClient(name, port);
 
@@ -30,21 +33,26 @@ public class SecureChatInterface {
         System.out.println("Client started...");
         System.out.println("Establish connection with server?");
         String estab = scanner.nextLine();
-        clientACopy.setPublicPrivateKeyPair( SecureClient.getPublicPrivateKeyPair(1024, clientACopy.getClientName()) );
+        Key[] pair = SecureClient.getPublicPrivateKeyPair(1024, clientACopy.getClientName());
+        clientACopy.setPublicPrivateKeyPair( pair );
 
         if (estab.equals("Yes") || estab.equals("yes") || estab.equals("y"))
         {
             System.out.println("Enter Client NAME of who you want to communicate with: ");
-//            String ClientName = scanner.nextLine();
-            String ClientName = "";
+            String ClientName = scanner.nextLine();
+
             System.out.println("Enter Client PORT of who you want to communicate with: ");
-//            int portNumOfRec = scanner.nextInt();
-            int portNumOfRec = 0;
-            ClientName = "Client_D";
-            portNumOfRec = 5411;
+            int portNumOfRec = scanner.nextInt();
+//            int portNumOfRec = 0;
+//            ClientName = "Client_D";
+//            portNumOfRec = 5411;
+//            password = "connect123";
 
+            System.out.println("Enter password: ");
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            password = br.readLine();
 
-            clientA.requestSharedKeyWith(ClientName, "localhost", 2400);
+            clientA.requestSharedKeyWith(ClientName, "localhost", 2400, password);
             Thread.sleep(10000);
 
             System.out.println("SHared " + SecureClient.byteArrayToHex(clientA.sharedKey));
@@ -54,6 +62,7 @@ public class SecureChatInterface {
             //clientA.start(); // Causes an IllegalStateExceptionError
 
 			clientACopy.sharedKey = clientA.sharedKey;
+			clientACopy.peerName = ClientName;
 			clientACopy.prepareConnectionTo("localhost", portNumOfRec);
 			clientACopy.start();
             clientACopy.startedCommunication();
@@ -69,7 +78,9 @@ public class SecureChatInterface {
             while(true)
             {
                 System.out.println("Enter message: ");
-                message = scanner.next();
+                BufferedReader br2 = new BufferedReader(new InputStreamReader(System.in));
+                message = br2.readLine();
+
                 if(message.equals("end"))
                 {
                     break;
@@ -84,35 +95,28 @@ public class SecureChatInterface {
         else
         {
 
-
-            String incomingMessage = "";
-            while(true)
+            System.out.println("Wating for connection..");
+            if(String.valueOf(args[0]).equals("Client_D"))
             {
-                //Wait
-                if(!clientA.receivingComm)
-                {
-                    break;
-                }
+                clientA.peerName = "Client_C";
+            }
+            else if(String.valueOf(args[0]).equals("Client_C"))
+            {
+                clientA.peerName = "Client_D";
             }
 
-            clientA.receivingComm=false;
-            while(true)
-            {
-                //Wait
-                if(!clientA.receivingComm)
-                {
-                    break;
-                }
-            }
+            clientA.setPublicPrivateKeyPair(pair);
+            clientACopy.peerName = "Client_C";
 
-            Thread.sleep(20000);
+            Thread.sleep(30000);
 
-            System.out.println("SHared " + SecureClient.byteArrayToHex(clientA.sharedKey));
+//            System.out.println("SHared " + SecureClient.byteArrayToHex(clientA.sharedKey));
 
             String message = "";
-            while (message.equals("end")){
+            while (!message.equals("end")){
                 System.out.println("Enter message: ");
-                message = scanner.nextLine();
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                message = br.readLine();
                 clientA.sendEncryptedMessage(message);
 
             }

@@ -20,10 +20,10 @@ clean:
 	@rm -f *.class
 	
 start_C:
-	java -cp bcprov-ext-jdk15on-157.jar;C:\Users\Omondi\GitHub\EncryptedChatMessenger\src SecureChatInterface Client_C 5310
+	java -cp bcprov-ext-jdk15on-157.jar;C:\Users\Omondi\GitHub\EncryptedChatMessenger\src SecureChatInterface Client_C 5311
 	
 start_D:
-	java -cp bcprov-ext-jdk15on-157.jar;C:\Users\Omondi\GitHub\EncryptedChatMessenger\src SecureChatInterface Client_D 5410
+	java -cp bcprov-ext-jdk15on-157.jar;C:\Users\Omondi\GitHub\EncryptedChatMessenger\src SecureChatInterface Client_D 5411
 
 start_server:
 	java -cp bcprov-ext-jdk15on-157.jar;C:\Users\Omondi\GitHub\EncryptedChatMessenger\src ExampleServerInterface
