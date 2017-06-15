@@ -18,6 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 /**
@@ -102,8 +104,8 @@ public class SecureClient extends PeerClient{
         SecureClient clientWithConnection = new SecureClient( getClientName() , getPort() , sharedKey);
 
         //Gen RSA keys for each clients
-        receivingClient.setPublicPrivateKeyPair( SecureClient.getPublicPrivateKeyPair(1024) );
-        clientWithConnection.setPublicPrivateKeyPair( SecureClient.getPublicPrivateKeyPair(1024) );
+        receivingClient.setPublicPrivateKeyPair( SecureClient.getPublicPrivateKeyPair(1024, receivingClient.getClientName()) );
+        clientWithConnection.setPublicPrivateKeyPair( SecureClient.getPublicPrivateKeyPair(1024, clientWithConnection.getClientName()) );
 
         clientWithConnection.prepareConnectionTo(receivingClient.getHostName(), receivingClient.getPort());
         clientWithConnection.startedCommunication();
@@ -122,9 +124,12 @@ public class SecureClient extends PeerClient{
     }
 
     protected void sendEncryptedMessage(String message) throws IOException, InvalidCipherTextException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchProviderException, InvalidKeyException {
-        if ( startedCommunication ) {
+        if ( startedCommunication )
+        {
             sendMessage(ENCRYPTED_MESSAGE_KEYPHRASE);
-        } else{
+        }
+        else
+        {
             currentSecureClientThread.sendMessage(ENCRYPTED_MESSAGE_KEYPHRASE);
         }
         sendEncryptedByteArray(message.getBytes());
@@ -199,7 +204,11 @@ public class SecureClient extends PeerClient{
      * @param secureClient
      * @return if successful
      */
-    protected static boolean authenticateMessage(byte[] encryptedMessage, ObjectInputStream is, SecureClient secureClient) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchProviderException, NoSuchPaddingException, InvalidCipherTextException {
+    protected static boolean authenticateMessage(byte[] encryptedMessage, ObjectInputStream is, SecureClient secureClient)
+            throws IOException, ClassNotFoundException, NoSuchAlgorithmException, IllegalBlockSizeException,
+            InvalidKeyException, BadPaddingException, NoSuchProviderException, NoSuchPaddingException,
+            InvalidCipherTextException
+    {
         String authenticationReq = (String)is.readObject();
         if (authenticationReq.equals(SecureClient.SIGN_AUTHENTICATION_KEYPHRASE)){
             System.out.println(secureClient.getClientName() + " is authenticating message...");
@@ -211,7 +220,7 @@ public class SecureClient extends PeerClient{
                 is.readFully(signature, 0, signature.length); // read the message
             }
             //Decrypt using peer clients public key
-            byte[] decryptedSign = SecureClient.decryptWithRSAKey( signature , secureClient.getSecureConnectionWithPeer().getOtherPublicKey(secureClient.getClientName()) );
+            byte[] decryptedSign = SecureClient.decryptWithRSAKey( signature, getOtherClientPublicKey(secureClient.getClientName()) );
             System.out.println("Decrypted sign : "+  SecureClient.byteArrayToHex(decryptedSign) + " with pubkey :" + SecureClient.byteArrayToHex(secureClient.getSecureConnectionWithPeer().getOtherPublicKey(secureClient.getClientName()).getEncoded()) );
             if ( Arrays.equals(decryptedSign, SecureClient.hashByteArray(encryptedMessage)) ){
                 System.out.println(secureClient.getClientName() + " has successfully authenticated the message.");
@@ -226,6 +235,32 @@ public class SecureClient extends PeerClient{
             System.out.println("No Authentication found");
             return false;
         }
+    }
+
+    private static Key getOtherClientPublicKey(String clientName)
+            throws IOException, NoSuchAlgorithmException
+    {
+        Key pk = null;
+        String keyFileName = "pubkey_"+clientName;
+        File file = new File(keyFileName);
+        FileInputStream in = new FileInputStream(file);
+        DataInputStream dis = new DataInputStream(in);
+        byte[] keyBytes = new byte[(int)file.length()];
+        dis.readFully(keyBytes);
+        dis.close();
+
+        try
+        {
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            pk = kf.generatePublic(spec);
+        }
+        catch(InvalidKeySpecException e)
+        {
+            e.printStackTrace();
+        }
+
+        return pk;
     }
 
     /**
@@ -254,7 +289,9 @@ public class SecureClient extends PeerClient{
      * @param lengthOfKeys
      * @return
      */
-    protected static Key[] getPublicPrivateKeyPair(int lengthOfKeys) throws NoSuchProviderException, NoSuchAlgorithmException, NoSuchPaddingException {
+    protected static Key[] getPublicPrivateKeyPair(int lengthOfKeys, String clientName)
+            throws NoSuchProviderException, NoSuchAlgorithmException, NoSuchPaddingException, IOException
+    {
         Key[] keyPair = new Key[2];
         Security.addProvider(new BouncyCastleProvider());
         SecureRandom random = new SecureRandom();
@@ -267,6 +304,12 @@ public class SecureClient extends PeerClient{
 
         keyPair[0] = pubKey;
         keyPair[1] = privKey;
+
+        // Write public key to file
+        byte[] key = pubKey.getEncoded();
+        FileOutputStream keyfos = new FileOutputStream("pubkey_"+clientName);
+        keyfos.write(key);
+        keyfos.close();
 
         return keyPair;
     }
@@ -424,13 +467,14 @@ public class SecureClient extends PeerClient{
     }
 
     //Returns a trusted server thread - Communication thread for client
-    protected ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
+    public ClientThread getNewClientThread(Socket clientSocket, String serverName) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, InvalidCipherTextException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
         return new SecureClientThread( clientSocket, serverName, this );
     }
 
     public void setPublicPrivateKeyPair(Key[] publicPrivateKeyPair) {
         this.publicPrivateKeyPair = publicPrivateKeyPair;
     }
+
 
     public SecureConnection getSecureConnectionWithPeer() {
         return secureConnectionWithPeer;
@@ -466,6 +510,10 @@ class SecureClientThread extends ClientThread{
                 username = keyword.split(":")[1] + username ;
                 System.out.println(username+"> my name is " +  keyword.split(":")[1]);
             }
+        }
+        if(keyword.equals("potato"))
+        {
+            System.out.println("Potato keyword");
         }
         else if (keyword.equals("initiate")){
             secureClient.receivingComm = true;

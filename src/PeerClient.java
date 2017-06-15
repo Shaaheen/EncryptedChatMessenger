@@ -198,18 +198,19 @@ class Server extends Thread {
             try{
                 serverSocket = new ServerSocket(port);
             }  catch (SocketException e){
-                //e.printStackTrace();
+                e.printStackTrace();
                 //Goes to next port until finds new available port
                 port++;
                 serverSocket = new ServerSocket(port);
             }
 
-            serverSocket.setSoTimeout(15000);
+            serverSocket.setSoTimeout(1500000);
             while (notStopped) {
                 System.out.println("Server waiting for clients on port " + port + "...");
 
                 clientSocket = serverSocket.accept();
-                System.out.println("Connection received from " + clientSocket.getInetAddress().getHostName());
+//                System.out.println("Connection received from " + clientSocket.getInetAddress().getHostName());
+
                 if (!notStopped)
                     break;
                 ClientThread t = null;
@@ -262,6 +263,7 @@ class Server extends Thread {
             serverSocket.close();
         }
     }
+
 
 }
 /*

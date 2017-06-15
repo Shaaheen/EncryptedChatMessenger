@@ -98,8 +98,8 @@ public class TrustedCryptoServer extends PeerClient{
         out.writeInt( sharedKey.length );
         out.write( sharedKey );
         out.flush();
-        out.writeObject("end_connection");
-        out.flush();
+//        out.writeObject("end_connection");
+//        out.flush();
 
     }
 
