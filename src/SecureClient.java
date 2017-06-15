@@ -221,8 +221,11 @@ public class SecureClient extends PeerClient{
             }
             //Decrypt using peer clients public key
             byte[] decryptedSign = SecureClient.decryptWithRSAKey( signature, getOtherClientPublicKey(secureClient.getClientName()) );
-            System.out.println("Decrypted sign : "+  SecureClient.byteArrayToHex(decryptedSign) + " with pubkey :" + SecureClient.byteArrayToHex(secureClient.getSecureConnectionWithPeer().getOtherPublicKey(secureClient.getClientName()).getEncoded()) );
+            System.out.println("Decrypted sign : "+  SecureClient.byteArrayToHex(decryptedSign) + " with pubkey :" + SecureClient.byteArrayToHex(getOtherClientPublicKey(secureClient.getClientName()).getEncoded()) );
             if ( Arrays.equals(decryptedSign, SecureClient.hashByteArray(encryptedMessage)) ){
+//                System.out.println("SHARED KEY:");
+//                System.out.println( SecureClient.byteArrayToHex( secureClient.sharedKey ));
+
                 System.out.println(secureClient.getClientName() + " has successfully authenticated the message.");
                 return true;
             }
@@ -241,7 +244,8 @@ public class SecureClient extends PeerClient{
             throws IOException, NoSuchAlgorithmException
     {
         Key pk = null;
-        String keyFileName = "pubkey_"+clientName;
+//        String keyFileName = "pubkey_"+clientName;
+        String keyFileName = "pubkey_Client_C";
         File file = new File(keyFileName);
         FileInputStream in = new FileInputStream(file);
         DataInputStream dis = new DataInputStream(in);
@@ -329,6 +333,7 @@ public class SecureClient extends PeerClient{
 
     protected static void receiveAndStoreEncryptedFile( String fileName, ObjectInputStream objectInputStream, SecureClient secureClient ) throws IOException, InvalidCipherTextException, BadPaddingException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, InvalidKeyException, ClassNotFoundException {
         System.out.println(secureClient.getClientName() + " is receiving encrypted file...");
+
 
         int length = objectInputStream.readInt();//is.readInt();                    // read length of incoming message
         byte[] encryptedMessage = new byte[1];
@@ -544,6 +549,7 @@ class SecureClientThread extends ClientThread{
             if (SecureClient.authenticateMessage(encryptedMessage, is, secureClient)){
                 System.out.println( secureClient.name + " received Encrypted msg= " + SecureClient.byteArrayToHex( encryptedMessage ) );
                 System.out.println("----------------");
+                System.out.println("Shared what what : " + SecureClient.byteArrayToHex(secureClient.sharedKey) );
                 System.out.println( secureClient.name + "> Received decrypted msg= "
                         + new String( SecureClient.decryptWithAesKey( encryptedMessage, secureClient.sharedKey ), "UTF-8" ) );
                 System.out.println("----------------");
